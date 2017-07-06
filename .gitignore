@@ -53,7 +53,6 @@ google-services.json
 freeline.py
 freeline/
 freeline_project_description.json
-<<<<<<< HEAD
 
 
 # Built application files
@@ -93,5 +92,3 @@ local.properties
 .Trashes
 ehthumbs.db
 Thumbs.db
-=======
->>>>>>> origin/master
