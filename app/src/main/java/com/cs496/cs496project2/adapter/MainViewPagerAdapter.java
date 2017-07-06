@@ -8,9 +8,9 @@ import com.cs496.cs496project2.fragment.ContactsFragment;
 import com.cs496.cs496project2.fragment.GalleryFragment;
 import com.cs496.cs496project2.fragment.MatchFragment;
 
-public class ViewPagerAdapter extends FragmentPagerAdapter {
+public class MainViewPagerAdapter extends FragmentPagerAdapter {
 
-    public ViewPagerAdapter(FragmentManager fm) {
+    public MainViewPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 

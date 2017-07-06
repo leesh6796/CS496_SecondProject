@@ -12,7 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.cs496.cs496project2.adapter.ViewPagerAdapter;
+import com.cs496.cs496project2.adapter.MainViewPagerAdapter;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private String[] pageTitle = {"Contacts", "Gallery", "Match"};
-    private ViewPagerAdapter pagerAdapter;
+    private MainViewPagerAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity
             tabLayout.addTab(tabLayout.newTab().setText(pageTitle[i]));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        pagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
