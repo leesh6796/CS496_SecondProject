@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout drawer;
     private ViewPager viewPager;
     private TabLayout tabLayout;
-    private String[] pageTitle = {"Contacts", "Gallery", "Match"};
+    private String[] pageTitle = {"Friends", "Me", "Match"};
     private MainViewPagerAdapter pagerAdapter;
 
     @Override
