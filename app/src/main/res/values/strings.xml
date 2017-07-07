@@ -2,6 +2,7 @@
     <string name="app_name">CS496Project2</string>
 
     <string name="facebook_app_id">261593707657180</string>
+    <string name="fb_login_protocol_scheme">fb261593707657180</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

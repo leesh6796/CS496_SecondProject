@@ -63,7 +63,7 @@
             app:menu="@menu/drawer_menu">
 
             <com.facebook.login.widget.LoginButton
-                android:id="@+id/loginButton"
+                android:id="@+id/btn_fb_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"

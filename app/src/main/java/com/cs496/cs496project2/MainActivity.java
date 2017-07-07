@@ -1,6 +1,7 @@
 package com.cs496.cs496project2;
 
 
+import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
@@ -20,6 +21,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -28,15 +30,25 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Arrays;
 
 import okhttp3.*;
 
 
 import com.cs496.cs496project2.adapter.MainViewPagerAdapter;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -47,17 +59,19 @@ public class MainActivity extends AppCompatActivity
     private TabLayout tabLayout;
     private String[] pageTitle = {"Friends", "Me", "Match"};
     private MainViewPagerAdapter pagerAdapter;
+    private CallbackManager callbackManager;
+    private AccessToken accessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //toolbar setup
+        //toolbar setup///////////////////////////////////////////////////////////////////////////
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //navigation drawer setup
+        //navigation drawer setup////////////////////////////////////////////////////////////////////
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -66,9 +80,42 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-        //viewpager and tab layout setup
+        //facebook login & get access token///////////////////////////////////////////////////////////////////////
+        callbackManager = CallbackManager.Factory.create();
+
+        LoginButton loginButton = (LoginButton) findViewById(R.id.btn_fb_login);
+        loginButton.setReadPermissions(Arrays.asList("public_profile", "user_friends"));
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        Log.v("result",object.toString());
+                    }
+                });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,email,gender,birthday");
+                graphRequest.setParameters(parameters);
+                graphRequest.executeAsync();
+                Toast.makeText(getApplicationContext(), "Logged In", Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onCancel() { }
+            @Override
+            public void onError(FacebookException error) {
+                Log.e("LoginErr",error.toString());
+            }
+        });
+
+        accessToken = AccessToken.getCurrentAccessToken();
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        //viewpager and tab layout setup//////////////////////////////////////////////////////////////////
         viewPager = (ViewPager) findViewById(R.id.view_pager);
 
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
@@ -93,7 +140,16 @@ public class MainActivity extends AppCompatActivity
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
 
@@ -136,7 +192,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_sync_contacts) {
-            syncContacts();
+
         } else if (id == R.id.nav_camera) {
 
         } else if (id == R.id.nav_import_local) {
@@ -146,11 +202,6 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-
-    public void syncContacts() {
-
     }
 
 
