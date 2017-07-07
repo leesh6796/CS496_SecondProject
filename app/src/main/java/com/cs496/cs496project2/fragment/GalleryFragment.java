@@ -44,6 +44,7 @@ public class GalleryFragment extends Fragment {
 
         recyclerView = (RecyclerView) root.findViewById(R.id.recycler_view_thumbnails);
 
+
         images = new ArrayList<>();
         adapter = new GalleryAdapter(getActivity().getApplicationContext(), images);
 
@@ -71,7 +72,7 @@ public class GalleryFragment extends Fragment {
             }
         }));
 
-        fetchImages();
+        //fetchImages();
         return root;
     }
 

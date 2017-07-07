@@ -48,7 +48,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
 
         //TODO: image sources!
         Glide.with(mContext)
-                .load("")
+                .load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNDJerebYjU3S4HUgWYwDAN1MSq0R8ARqGIjP4NQyDfN885fXt")
                 .placeholder(R.drawable.placeholder)
                 .thumbnail(0.5f)
                 .crossFade()
