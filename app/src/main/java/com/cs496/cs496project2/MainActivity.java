@@ -205,6 +205,10 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    //휴대전화 연락처와 페이스북 친구 정보를 이름을 기준으로 합침 ->
+    private void syncContacts() {
+
+    }
 
 
 }
