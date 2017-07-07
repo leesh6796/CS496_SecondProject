@@ -7,7 +7,6 @@ var contactSchema = new Schema({
         phoneNumber : String,
         email : String,
         profilePicture : String,
-        isFacebookContact : Boolean
 });
 
 module.exports = mongoose.model('Contact', contactSchema);

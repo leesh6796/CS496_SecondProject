@@ -10,5 +10,9 @@ module.exports = {
         },
 
         addContact : (req, res) => {
+                var accountPhoneNumber = req.params.accountPhoneNumber;
+                var name = req.params.name;
+                var phoneNumber = req.params.phoneNumber;
+                var email = req.params.email;
         }
 };
