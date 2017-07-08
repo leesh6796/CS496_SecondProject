@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.cs496.cs496project2.R;
 import com.cs496.cs496project2.adapter.GalleryAdapter;
 import com.cs496.cs496project2.model.Image;
+import com.karumi.headerrecyclerview.HeaderSpanSizeLookup;
 
 import java.util.ArrayList;
 
@@ -46,11 +47,21 @@ public class GalleryFragment extends Fragment {
 
 
         images = new ArrayList<>();
+
+        images.add(null);images.add(null);images.add(null);images.add(null);images.add(null);
+        images.add(null);images.add(null);images.add(null);images.add(null);images.add(null);
+
         adapter = new GalleryAdapter(getActivity().getApplicationContext(), images);
 
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 2);
+        adapter.setHeader(new Image(1));
+        adapter.setItems(images);
+
+        GridLayoutManager mLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 2);
+        HeaderSpanSizeLookup headerSpanSizeLookup = new HeaderSpanSizeLookup(adapter, mLayoutManager);
+        mLayoutManager.setSpanSizeLookup(headerSpanSizeLookup);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
         recyclerView.setAdapter(adapter);
 
         recyclerView.addOnItemTouchListener(new GalleryAdapter.RecyclerTouchListener(getActivity().getApplicationContext(), recyclerView, new GalleryAdapter.ClickListener() {

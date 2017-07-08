@@ -14,10 +14,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.cs496.cs496project2.R;
 import com.cs496.cs496project2.model.Image;
+import com.karumi.headerrecyclerview.HeaderRecyclerViewAdapter;
 
 import java.util.List;
 
-public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryViewHolder> {
+public class GalleryAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewHolder, Image, Image, Image> {
     private List<Image> images;
     private Context mContext;
 
@@ -30,6 +31,15 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
         }
     }
 
+    public class HeaderViewHolder extends RecyclerView.ViewHolder {
+        public ImageView thumbnail;
+
+        public HeaderViewHolder(View view) {
+            super(view);
+            thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
+        }
+    }
+
 
     public GalleryAdapter(Context context, List<Image> images) {
         mContext = context;
@@ -37,14 +47,35 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
     }
 
     @Override
-    public GalleryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    protected HeaderViewHolder onCreateHeaderViewHolder(ViewGroup parent, int viewType) {
+        View headerView = LayoutInflater.from(parent.getContext()).inflate(R.layout.gallery_thumbnail, parent, false);
+        return new HeaderViewHolder(headerView);
+    }
+
+
+    @Override
+    protected void onBindHeaderViewHolder(RecyclerView.ViewHolder holder, int position) {
+        //TODO: image sources!
+        HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
+        Glide.with(mContext)
+                .load(R.drawable.placeholder)
+                .thumbnail(0.5f)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(headerViewHolder.thumbnail);
+    }
+
+    @Override
+    public GalleryViewHolder onCreateItemViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.gallery_thumbnail, parent, false);
 
         return new GalleryViewHolder(itemView);
     }
 
+
     @Override
-    public void onBindViewHolder(GalleryViewHolder holder, int position) {
+    public void onBindItemViewHolder(RecyclerView.ViewHolder holder, int position) {
+        GalleryViewHolder galleryViewHolder = (GalleryViewHolder) holder;
 
         //TODO: image sources!
         Glide.with(mContext)
@@ -53,8 +84,9 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
                 .thumbnail(0.5f)
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(holder.thumbnail);
+                .into(galleryViewHolder.thumbnail);
     }
+
 
     @Override
     public int getItemCount() {
