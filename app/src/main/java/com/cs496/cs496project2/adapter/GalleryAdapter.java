@@ -36,7 +36,7 @@ public class GalleryAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
 
         public HeaderViewHolder(View view) {
             super(view);
-            thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
+            thumbnail = (ImageView) view.findViewById(R.id.profile_image);
         }
     }
 
@@ -48,7 +48,7 @@ public class GalleryAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
 
     @Override
     protected HeaderViewHolder onCreateHeaderViewHolder(ViewGroup parent, int viewType) {
-        View headerView = LayoutInflater.from(parent.getContext()).inflate(R.layout.gallery_thumbnail, parent, false);
+        View headerView = LayoutInflater.from(parent.getContext()).inflate(R.layout.gallery_header, parent, false);
         return new HeaderViewHolder(headerView);
     }
 

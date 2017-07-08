@@ -41,7 +41,7 @@ public class FriendItemView extends FrameLayout {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.friend_item, this, true);
         nameView = (TextView) findViewById(R.id.friend_name);
-        phoneNumberView = (TextView) findViewById(R.id.friend_mobile);
+        phoneNumberView = (TextView) findViewById(R.id.friend_phoneNumber);
         profileImageView = (ImageView) findViewById(R.id.friend_profile_image);
 
     }

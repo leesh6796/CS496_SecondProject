@@ -8,6 +8,7 @@
         android:layout_height="90dp"
         android:id="@+id/friend_profile_image"
         android:src = "@drawable/placeholder"/>
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -24,7 +25,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/friend_mobile"
+            android:id="@+id/friend_phoneNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
