@@ -90,7 +90,7 @@ public class GalleryAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        return images.size();
+        return images.size() + 1;
     }
 
     public interface ClickListener {
