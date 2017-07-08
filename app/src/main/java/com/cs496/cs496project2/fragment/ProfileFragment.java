@@ -31,7 +31,7 @@ public class ProfileFragment extends Fragment {
 
     public ProfileFragment() {
         // Required empty public constructor
-        //TODO 내 프로필
+        //TODO 내 프로필: Argument없으면 내 정보로 세팅한다
     }
 
 //    public ProfileFragment(Bundle bundle) {
@@ -91,5 +91,5 @@ public class ProfileFragment extends Fragment {
         //fetchImages();
         return view;
     }
-    
+
 }

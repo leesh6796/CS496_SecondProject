@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        //TODO: 최적화?
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -192,7 +194,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_sync_contacts) {
+        if (id == R.id.nav_sync_friends) {
+
 
         } else if (id == R.id.nav_camera) {
 
@@ -206,8 +209,8 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    //TODO: 카톡 연락처 받아와 서버로 올려보냄
-    private void syncContacts() {
+    //TODO: 카톡 연락처 받아와 서버로 올려보냄, 내부저장소에 저장, 내 정보를 sharedpref에 저장
+    private void syncFriends() {
 
     }
 

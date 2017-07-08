@@ -31,7 +31,7 @@ public class FriendsFragment extends Fragment {
     public void onCreate(Bundle savedInstances) {
         super.onCreate(savedInstances);
 
-        //TODO: 서버에서 친구 정보 가져와라
+        //TODO: 서버에서 친구 정보 가져와라 가 아니라 내부저장소에 저장한 것을 불러오도록 하자
 
     }
 

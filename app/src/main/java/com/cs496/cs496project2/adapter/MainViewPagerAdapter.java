@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.cs496.cs496project2.fragment.FriendsFragment;
-import com.cs496.cs496project2.fragment.GalleryFragment;
 import com.cs496.cs496project2.fragment.MatchFragment;
 import com.cs496.cs496project2.fragment.ProfileFragment;
 
