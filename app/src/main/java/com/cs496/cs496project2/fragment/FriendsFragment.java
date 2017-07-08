@@ -2,6 +2,7 @@ package com.cs496.cs496project2.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -39,6 +40,7 @@ public class FriendsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_friends, container, false);
 
         listView = (ListView) view.findViewById(R.id.friends);
+
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
@@ -46,7 +48,14 @@ public class FriendsFragment extends Fragment {
                 Friend friend = (Friend) adapter.getItem(position);
 
                 //TODO: ProfileFragment에 적절한 정보 넘긴다.
-
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("friend", friend);
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ProfileFragment profileFragment = ProfileFragment.newInstance();
+                profileFragment.setArguments(bundle);
+                ft.replace(R.id.friends_tap_content, profileFragment, "profile");
+                ft.addToBackStack(null);
+                ft.commit();
             }
         });
 

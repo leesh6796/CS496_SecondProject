@@ -45,6 +45,10 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
         this.context = context;
     }
 
+
+    //TODO: getHeader(), getItems()로 항목 접근!
+
+
     @Override
     protected HeaderViewHolder onCreateHeaderViewHolder(ViewGroup parent, int viewType) {
         View headerView = LayoutInflater.from(parent.getContext()).inflate(R.layout.profile_header, parent, false);

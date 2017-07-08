@@ -25,35 +25,41 @@ public class ProfileFragment extends Fragment {
     private ProfileAdapter adapter;
     private RecyclerView recyclerView;
 
+    public static ProfileFragment newInstance() {
+        return new ProfileFragment();
+    }
 
     public ProfileFragment() {
         // Required empty public constructor
         //TODO 내 프로필
     }
 
-    public ProfileFragment(Bundle bundle) {
-        //TODO 적절히 넘겨받은 친구의 프로필
-
-    }
+//    public ProfileFragment(Bundle bundle) {
+//        //TODO 적절히 넘겨받은 친구의 프로필 -> 내가 아니라 친구의 프로필이면 fab 나오게 해서 ***을 한다!!
+//
+//    }
 
     @Override
     public void onCreate(Bundle savedInstances) {
         super.onCreate(savedInstances);
 
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        recyclerView = (RecyclerView) root.findViewById(R.id.profile_recycler_view);
+        recyclerView = (RecyclerView) view.findViewById(R.id.profile_recycler_view);
 
         images = new ArrayList<>();
+        Image header = new Image(0);
         images.add(null);images.add(null);images.add(null);images.add(null);images.add(null);
         images.add(null);images.add(null);images.add(null);images.add(null);images.add(null);
 
         adapter = new ProfileAdapter(getActivity().getApplicationContext());
-        adapter.setHeader(new Image(1));
+        adapter.setHeader(header);
         adapter.setItems(images);
 
         GridLayoutManager mLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 2);
@@ -70,10 +76,10 @@ public class ProfileFragment extends Fragment {
                 bundle.putSerializable("images", images);
                 bundle.putInt("position", position);
 
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                SlideShowFragment newFragment = SlideShowFragment.newInstance();
-                newFragment.setArguments(bundle);
-                newFragment.show(ft, "slideshow");
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                SlideShowFragment slideShowFragment = SlideShowFragment.newInstance();
+                slideShowFragment.setArguments(bundle);
+                slideShowFragment.show(ft, "slideshow");
             }
 
             @Override
@@ -83,7 +89,7 @@ public class ProfileFragment extends Fragment {
         }));
 
         //fetchImages();
-        return root;
+        return view;
     }
-
+    
 }
