@@ -1,5 +1,7 @@
 package com.cs496.cs496project2.adapter;
 
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -7,20 +9,24 @@ import android.widget.Filter;
 import android.widget.Filterable;
 
 import com.cs496.cs496project2.helper.FriendItemView;
+import com.cs496.cs496project2.helper.SoundSearcher;
 import com.cs496.cs496project2.model.Friend;
 
 import java.util.ArrayList;
 
-import Filteralb;
-
 
 public class FriendAdapter extends BaseAdapter implements Filterable {
 
-    ArrayList<Friend> items = new ArrayList<Friend>();
-    CustomFilter filter;
-    ArrayList<Friend> filterList = items;
+    Context context;
+    ArrayList<Friend> items;
+    SearchFilter filter;
+    ArrayList<Friend> filterList;
 
-    
+    public FriendAdapter(Context context, ArrayList<Friend> items) {
+        this.items = items;
+        filterList = items;
+    }
+
 
     @Override
     public int getCount() {
@@ -42,16 +48,15 @@ public class FriendAdapter extends BaseAdapter implements Filterable {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup viewGroup) {
-        FriendItemView view = new FriendItemView(getActivity().getApplicationContext());
+    public View getView(int position, View convertView, ViewGroup parent) {
+        FriendItemView view = (FriendItemView) convertView;
+        if (view == null) {
+            view = new FriendItemView(context.getApplicationContext());
+        }
         Friend item = items.get(position);
         view.setName(item.getName());
-        view.setMobile(item.getMobile());
-        if (item.getbitmap() != null) {
-            view.setBitImage(item.getbitmap());
-        } else {
-            view.setImage(item.getResID());
-        }
+        view.setPhoneNumber(item.getPhoneNumber());
+        view.setImage(item.getImageIDs()[position]);
 
         return view;
     }
@@ -59,12 +64,12 @@ public class FriendAdapter extends BaseAdapter implements Filterable {
     @Override
     public Filter getFilter(){
         if(filter == null){
-            filter = new CustomFilter();
+            filter = new SearchFilter();
         }
         return filter;
     }
 
-    class CustomFilter extends Filter{
+    private class SearchFilter extends Filter{
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
@@ -75,8 +80,8 @@ public class FriendAdapter extends BaseAdapter implements Filterable {
                 ArrayList<Friend> filters = new ArrayList<Friend>();
 
                 for(int i =0; i<filterList.size();i++){
-                    if(filterList.get(i).getName().toUpperCase().contains(constraint) || filterList.get(i).getMobile().contains(constraint) || SoundSearcher.matchString(filterList.get(i).getName(),constraint.toString())){
-                        Friend p = new Friend(filterList.get(i).getName(),filterList.get(i).getMobile());
+                    if(filterList.get(i).getName().toUpperCase().contains(constraint) || filterList.get(i).getPhoneNumber().contains(constraint) || SoundSearcher.matchString(filterList.get(i).getName(),constraint.toString())){
+                        Friend p = new Friend(filterList.get(i).getPhoneNumber());
                         filters.add(p);
                     }
                 }

@@ -4,9 +4,43 @@ import java.io.Serializable;
 
 public class Friend implements Serializable {
 
-    //email 하나만 가지고 있고 사진 등 그때그때 받아온다?
-    String email;
+    private String phoneNumber, name, email;
+    private int[] imageIDs;
 
-    public Friend() {}
+    public Friend(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public int[] getImageIDs() {
+        return imageIDs;
+    }
+
+    public void setImageIDs(int[] imageIDs) {
+        this.imageIDs = imageIDs;
+    }
 
 }
