@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -142,7 +143,7 @@ public class MainActivity extends AppCompatActivity
         });
         /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+        //TODO: 카톡 로그인 받기
 
     }
 
@@ -205,8 +206,14 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    //휴대전화 연락처와 페이스북 친구 정보를 이름을 기준으로 합침 ->
+    //TODO: 카톡 연락처 받아와 서버로 올려보냄
     private void syncContacts() {
+
+    }
+
+
+    //TODO: 내 사진(외부저장소)을 서버로 올려보냄 + nav에서 카메라 열기
+    private void addImages() {
 
     }
 }

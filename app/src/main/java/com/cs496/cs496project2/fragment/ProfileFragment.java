@@ -28,6 +28,12 @@ public class ProfileFragment extends Fragment {
 
     public ProfileFragment() {
         // Required empty public constructor
+        //TODO 내 프로필
+    }
+
+    public ProfileFragment(Bundle bundle) {
+        //TODO 적절히 넘겨받은 친구의 프로필
+
     }
 
     @Override
