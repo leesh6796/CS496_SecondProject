@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
                 Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,email,gender,birthday");
+                parameters.putString("fields", "id,nameView,email,gender,birthday");
                 graphRequest.setParameters(parameters);
                 graphRequest.executeAsync();
                 Toast.makeText(getApplicationContext(), "Logged In", Toast.LENGTH_SHORT).show();

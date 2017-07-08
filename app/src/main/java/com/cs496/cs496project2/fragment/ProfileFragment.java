@@ -12,8 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cs496.cs496project2.R;
-import com.cs496.cs496project2.adapter.GalleryAdapter;
+import com.cs496.cs496project2.adapter.ProfileAdapter;
 import com.cs496.cs496project2.model.Image;
+import com.karumi.headerrecyclerview.HeaderSpanSizeLookup;
 
 import java.util.ArrayList;
 
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 public class ProfileFragment extends Fragment {
 
     private ArrayList<Image> images;
-    private GalleryAdapter adapter;
+    private ProfileAdapter adapter;
     private RecyclerView recyclerView;
 
 
@@ -29,22 +30,34 @@ public class ProfileFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(Bundle savedInstances) {
+        super.onCreate(savedInstances);
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_gallery, container, false);
+        View root = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        recyclerView = (RecyclerView) root.findViewById(R.id.recycler_view_thumbnails);
+        recyclerView = (RecyclerView) root.findViewById(R.id.profile_recycler_view);
 
         images = new ArrayList<>();
-        adapter = new GalleryAdapter(getActivity().getApplicationContext(), images);
+        images.add(null);images.add(null);images.add(null);images.add(null);images.add(null);
+        images.add(null);images.add(null);images.add(null);images.add(null);images.add(null);
 
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 2);
+        adapter = new ProfileAdapter(getActivity().getApplicationContext());
+        adapter.setHeader(new Image(1));
+        adapter.setItems(images);
+
+        GridLayoutManager mLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 2);
+        HeaderSpanSizeLookup headerSpanSizeLookup = new HeaderSpanSizeLookup(adapter, mLayoutManager);
+        mLayoutManager.setSpanSizeLookup(headerSpanSizeLookup);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
-        recyclerView.addOnItemTouchListener(new GalleryAdapter.RecyclerTouchListener(getActivity().getApplicationContext(), recyclerView, new GalleryAdapter.ClickListener() {
+        recyclerView.addOnItemTouchListener(new ProfileAdapter.RecyclerTouchListener(getActivity().getApplicationContext(), recyclerView, new ProfileAdapter.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Bundle bundle = new Bundle();

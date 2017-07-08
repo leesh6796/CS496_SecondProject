@@ -8,7 +8,7 @@ import java.util.Locale;
 
 public class Image implements Serializable {
     //사진은 서버에서 mobile/id 형식으로 지정될것
-    private String owner, title, description; //owner: designated by phoneNumber
+    private String owner, title, description; //owner: designated by phoneNumberView
     private int id;
     private Date date;
     private static DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyy '@' hh:mm aaa", Locale.ENGLISH);
