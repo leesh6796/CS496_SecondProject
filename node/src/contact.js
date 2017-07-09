@@ -6,7 +6,7 @@ var Contact = require('./model/contact');
 
 module.exports = {
         getContacts : (req, res) => {
-                var email = req.params.email;
+                var phoneNumber = req.params.phoneNumber;
         },
 
         addContact : (req, res) => {

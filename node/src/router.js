@@ -20,7 +20,7 @@ var multerInstance = multer({storage:storage});
 router.route('/api/account/get/:phoneNumber').get(account.getAccountInfo);
 router.route('/api/account/add/:name/:phoneNumber/:email').put(account.addAccount);
 
-router.route('/api/contacts/get/:email').get(contact.getContacts);
+router.route('/api/contacts/get/:phoneNumber').get(contact.getContacts);
 router.route('/api/contacts/add/:accountPhoneNumber/:name/:phoneNumber/:email').put(contact.getContacts);
 
 // atachment는 form의 input file name attribute를 의미한다.
