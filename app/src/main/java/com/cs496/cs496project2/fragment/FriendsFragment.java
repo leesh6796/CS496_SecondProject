@@ -16,12 +16,15 @@ import com.cs496.cs496project2.R;
 import com.cs496.cs496project2.adapter.FriendAdapter;
 import com.cs496.cs496project2.model.Friend;
 
+import java.util.ArrayList;
+
 
 public class FriendsFragment extends Fragment {
 
     EditText editText;
     ListView listView;
     FriendAdapter adapter;
+    ArrayList<Friend> friends = new ArrayList<>();
 
     public FriendsFragment() {
         // Required empty public constructor
@@ -41,6 +44,7 @@ public class FriendsFragment extends Fragment {
 
         listView = (ListView) view.findViewById(R.id.friends);
 
+        adapter = new FriendAdapter(getActivity(), friends);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
