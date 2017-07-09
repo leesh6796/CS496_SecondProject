@@ -5,8 +5,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.cs496.cs496project2.fragment.FriendsFragment;
-import com.cs496.cs496project2.fragment.GalleryFragment;
 import com.cs496.cs496project2.fragment.MatchFragment;
+import com.cs496.cs496project2.fragment.ProfileFragment;
 
 public class MainViewPagerAdapter extends FragmentPagerAdapter {
 
@@ -18,7 +18,7 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch(position) {
             case 0: return new FriendsFragment();
-            case 1: return new GalleryFragment();
+            case 1: return new ProfileFragment();
             case 2: return new MatchFragment();
         }
         return null;
