@@ -23,6 +23,7 @@ router.route('/api/account/add/:name/:phoneNumber/:email').put(account.addAccoun
 router.route('/api/contacts/get/:email').get(contact.getContacts);
 router.route('/api/contacts/add/:accountPhoneNumber/:name/:phoneNumber/:email').put(contact.getContacts);
 
-router.route('/api/upload/profilePicture/:phoneNumber').post(multerInstance.single('attachment'), upload.uploadFile);
+// atachment는 form의 input file name attribute를 의미한다.
+router.route('/api/upload/picture/:phoneNumber').post(multerInstance.single('attachment'), upload.uploadFile);
 
 module.exports = router;
