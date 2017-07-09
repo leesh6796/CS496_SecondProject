@@ -12,8 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cs496.cs496project2.R;
-import com.cs496.cs496project2.adapter.GalleryAdapter;
+import com.cs496.cs496project2.adapter.ProfileAdapter;
 import com.cs496.cs496project2.model.Image;
+import com.karumi.headerrecyclerview.HeaderSpanSizeLookup;
 
 import java.util.ArrayList;
 
@@ -21,40 +22,64 @@ import java.util.ArrayList;
 public class ProfileFragment extends Fragment {
 
     private ArrayList<Image> images;
-    private GalleryAdapter adapter;
+    private ProfileAdapter adapter;
     private RecyclerView recyclerView;
 
+    public static ProfileFragment newInstance() {
+        return new ProfileFragment();
+    }
 
     public ProfileFragment() {
         // Required empty public constructor
+        //TODO 내 프로필: Argument없으면 내 정보로 세팅한다
     }
 
+//    public ProfileFragment(Bundle bundle) {
+//        //TODO 적절히 넘겨받은 친구의 프로필 -> 내가 아니라 친구의 프로필이면 fab 나오게 해서 ***을 한다!!
+//
+//    }
+
+    @Override
+    public void onCreate(Bundle savedInstances) {
+        super.onCreate(savedInstances);
+
+
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_gallery, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        recyclerView = (RecyclerView) root.findViewById(R.id.recycler_view_thumbnails);
+        recyclerView = (RecyclerView) view.findViewById(R.id.profile_recycler_view);
 
         images = new ArrayList<>();
-        adapter = new GalleryAdapter(getActivity().getApplicationContext(), images);
+        Image header = new Image(0);
+        images.add(null);images.add(null);images.add(null);images.add(null);images.add(null);
+        images.add(null);images.add(null);images.add(null);images.add(null);images.add(null);
 
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 2);
+        adapter = new ProfileAdapter(getActivity().getApplicationContext());
+        adapter.setHeader(header);
+        adapter.setItems(images);
+
+        GridLayoutManager mLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 2);
+        HeaderSpanSizeLookup headerSpanSizeLookup = new HeaderSpanSizeLookup(adapter, mLayoutManager);
+        mLayoutManager.setSpanSizeLookup(headerSpanSizeLookup);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
-        recyclerView.addOnItemTouchListener(new GalleryAdapter.RecyclerTouchListener(getActivity().getApplicationContext(), recyclerView, new GalleryAdapter.ClickListener() {
+        recyclerView.addOnItemTouchListener(new ProfileAdapter.RecyclerTouchListener(getActivity().getApplicationContext(), recyclerView, new ProfileAdapter.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("images", images);
                 bundle.putInt("position", position);
 
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                SlideShowFragment newFragment = SlideShowFragment.newInstance();
-                newFragment.setArguments(bundle);
-                newFragment.show(ft, "slideshow");
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                SlideShowFragment slideShowFragment = SlideShowFragment.newInstance();
+                slideShowFragment.setArguments(bundle);
+                slideShowFragment.show(ft, "slideshow");
             }
 
             @Override
@@ -64,7 +89,7 @@ public class ProfileFragment extends Fragment {
         }));
 
         //fetchImages();
-        return root;
+        return view;
     }
 
 }
