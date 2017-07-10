@@ -130,6 +130,8 @@ public class SlideShowFragment extends DialogFragment {
 
             container.addView(view);
 
+
+
             fullImageView.setOnClickListener(new ImageView.OnClickListener() {
                 @Override
                 public void onClick(View view) {
