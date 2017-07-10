@@ -28,6 +28,7 @@ import java.util.List;
 public class ServerRequest {
     private final String url = "http://52.79.188.97/";
     private final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private final String phoneNumber = MainActivity.myPhoneNumber;
 
     public String getUrl() {
         return this.url;
@@ -70,7 +71,6 @@ public class ServerRequest {
 
         JSONObject contacts = new JSONObject();
         try {
-            contacts.put("accountPhoneNumber", MainActivity.myPhoneNumber);
             JSONArray arrFriends = new JSONArray();
 
             int i;
@@ -80,7 +80,6 @@ public class ServerRequest {
                 body.put("name", iter.getName());
                 body.put("phoneNumber", iter.getPhoneNumber());
                 body.put("email", iter.getEmail());
-                body.put("profilePicture", "");
 
                 arrFriends.put(body);
             }
@@ -92,7 +91,7 @@ public class ServerRequest {
         }
 
         RequestBody reqBody = RequestBody.create(JSON, contacts.toString());
-        Request req = new Request.Builder().url(this.url + "api/contacts/set").put(reqBody).build();
+        Request req = new Request.Builder().url(this.url + "api/" + this.phoneNumber + "/set/friends").put(reqBody).build();
 
         try {
             Response res = client.newCall(req).execute();
@@ -107,7 +106,7 @@ public class ServerRequest {
     public List<Friend> getContacts() {
         OkHttpClient client = new OkHttpClient();
 
-        Request req = new Request.Builder().url(this.url + "api/contacts/get/" + MainActivity.myPhoneNumber).build();
+        Request req = new Request.Builder().url(this.url + "api/" + this.phoneNumber + "/get/friends").build();
         try {
             Response response = client.newCall(req).execute();
             JSONArray contacts = new JSONArray(response.body().string());
@@ -120,6 +119,7 @@ public class ServerRequest {
                 Friend item = new Friend(iter.getString("phoneNumber"));
                 item.setName(iter.getString("name"));
                 item.setEmail(iter.getString("email"));
+                item.setProfileImageUrl(iter.getString("profilePicture"));
 
                 friends.add(item);
             }

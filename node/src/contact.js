@@ -20,7 +20,7 @@ module.exports = {
         setContacts : (req, res) => {
                 var body = req.body;
 
-                var accountPhoneNumber = body.accountPhoneNumber;
+                var accountPhoneNumber = req.params.phoneNumber;
                 //var length = int(body.length);
                 var contacts = JSON.parse(body.contacts);
                 var i;
