@@ -4,6 +4,8 @@ package com.cs496.cs496project2.helper;
  * Created by memorial on 2017. 7. 10..
  */
 
+import android.util.Log;
+
 import com.cs496.cs496project2.MainActivity;
 import com.cs496.cs496project2.model.Friend;
 
@@ -80,7 +82,6 @@ public class ServerRequest {
                 Friend iter = friends.get(i);
                 body.put("name", iter.getName());
                 body.put("phoneNumber", iter.getPhoneNumber());
-                body.put("email", iter.getEmail());
 
                 arrFriends.put(body);
             }
@@ -119,8 +120,8 @@ public class ServerRequest {
                 JSONObject iter = contacts.getJSONObject(i);
                 Friend item = new Friend(iter.getString("phoneNumber"));
                 item.setName(iter.getString("name"));
-                item.setEmail(iter.getString("email"));
-                item.setProfileImageUrl(iter.getString("profilePicture"));
+
+                Log.i("name", iter.getString("name"));
 
                 friends.add(item);
             }

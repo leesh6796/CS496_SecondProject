@@ -53,6 +53,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -60,6 +61,7 @@ import java.util.Date;
 import com.cs496.cs496project2.activity.LoginActivity;
 import com.cs496.cs496project2.adapter.MainViewPagerAdapter;
 import com.cs496.cs496project2.helper.ServerRequest;
+import com.cs496.cs496project2.model.Friend;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -104,6 +106,9 @@ public class MainActivity extends AppCompatActivity
     static final int CAMERA_REQUEST = 3;
     String mCurrentPhotoPath;
 
+    private ArrayList<Friend> rv = new ArrayList<>();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +122,7 @@ public class MainActivity extends AppCompatActivity
         initViews();
 
         myPhoneNumber = getMyPhoneNumber();
+
     }
 
 
@@ -214,7 +220,7 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    //TODO: 폰 연락처 받아와 서버로 올려보냄(일부), 내부저장소에 저장
+    //TODO: 폰 연락처 받아와 서버로 올려보냄(일부), 내부저장소에 저장 -> 구현 방식?
     private void syncFriends() {
 
         final int permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS);
@@ -234,7 +240,7 @@ public class MainActivity extends AppCompatActivity
         cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
 
 
-        //TODO 서버로 보내라: ServerRequest 형식에 맞춰 수정할것, 보낼정보: 번호와 이름 뿐.
+        //TODO 서버로 보내기: ServerRequest 형식에 맞춰 수정할것, 보낼정보: 번호와 이름 뿐. -> 꼭 여기서 처리해야하는지?
         JSONArray friends = new JSONArray();
         while (cursor.moveToNext()) {
             JSONObject friend = new JSONObject(); //그냥 array만 해도 괜찮을듯
@@ -309,8 +315,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //TODO: 제목, description추가해서 업로드, id는 mongo에서 관리
-        //TODO: 이미지 이름 지정할 때 잘하기
+        //TODO: 서버로 이미지 올리기
         if(requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             Uri imageUri = Uri.parse(mCurrentPhotoPath);
             String fileNameInDB = (new File(imageUri.toString())).getName();

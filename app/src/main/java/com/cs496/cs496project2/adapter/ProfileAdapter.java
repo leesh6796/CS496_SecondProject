@@ -2,6 +2,7 @@ package com.cs496.cs496project2.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -47,7 +48,7 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
     }
 
 
-    //TODO: getHeader(), getItems()로 항목 접근!
+    //TODO: getHeader(), getItems()로 항목 접근
 
 
     @Override
@@ -59,8 +60,10 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
 
     @Override
     protected void onBindHeaderViewHolder(RecyclerView.ViewHolder holder, int position) {
-        //TODO: image sources!
+        //TODO:이거 왜인지 작동 안함, 아예 이 함수가 실행되기는 하는데?
+
         HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
+        Log.e("               ",getHeader().getImageUrl());
         Glide.with(context)
                 .load(getHeader().getImageUrl())
                 .placeholder(R.drawable.placeholder)
@@ -82,7 +85,7 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
     public void onBindItemViewHolder(RecyclerView.ViewHolder holder, int position) {
         ImageViewHolder imageViewHolder = (ImageViewHolder) holder;
 
-        //TODO: image sources!
+        //TODO: image sources! -> 으악
         Glide.with(context)
                 .load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNDJerebYjU3S4HUgWYwDAN1MSq0R8ARqGIjP4NQyDfN885fXt")
                 .placeholder(R.drawable.placeholder)
