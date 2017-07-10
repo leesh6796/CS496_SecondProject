@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Friend implements Serializable {
 
     private String phoneNumber, name, email;
-    private Image profileImage;
+    private String profileImageUrl;
     private ArrayList<Image> images;
 
     public Friend(String phoneNumber) {
@@ -37,9 +37,9 @@ public class Friend implements Serializable {
         this.email = email;
     }
 
-    public Image getProfileImage() { return profileImage; }
+    public String getProfileImageUrl() { return profileImageUrl; }
 
-    public void setProfileImage(Image profileImage) { this.profileImage = profileImage; }
+    public void setProfileImageUrl(String profileImageUrl) { this.profileImageUrl = profileImageUrl; }
 
     public ArrayList<Image> getImages() {
         return images;
