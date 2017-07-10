@@ -57,6 +57,7 @@ public class ServerRequest {
         Request req = new Request.Builder().url(this.url + "api/account/add").put(reqBody).build();
 
         try {
+            //TODO 여기 에러
             Response res = client.newCall(req).execute();
             return res.body().string();
         } catch(Exception e) {
@@ -132,7 +133,6 @@ public class ServerRequest {
         return null;
     }
 
-
     public List<String> getGallery() {
         OkHttpClient client = new OkHttpClient();
 
@@ -154,4 +154,5 @@ public class ServerRequest {
 
         return null;
     }
+
 }

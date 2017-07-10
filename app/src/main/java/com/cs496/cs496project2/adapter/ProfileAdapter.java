@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.cs496.cs496project2.MainActivity;
 import com.cs496.cs496project2.R;
 import com.cs496.cs496project2.model.Image;
 import com.karumi.headerrecyclerview.HeaderRecyclerViewAdapter;
@@ -61,7 +62,8 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
         //TODO: image sources!
         HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
         Glide.with(context)
-                .load(R.drawable.placeholder)
+                .load(getHeader().getImageUrl())
+                .placeholder(R.drawable.placeholder)
                 .thumbnail(0.5f)
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

@@ -9,13 +9,12 @@ import java.util.Locale;
 //이미지 정보 저장
 public class Image implements Serializable {
     //사진은 서버에서 mobile/id 형식으로 지정될것
-    private String owner, title, description; //owner: designated by phoneNumberView
-    private String id;
+    private String owner, title, description; //owner: designated by phoneNumber
+    private String id, imageUri, imageUrl;
     private Date date;
     private static DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyy '@' hh:mm aaa", Locale.ENGLISH);
 
-    public Image(String id) {
-        this.id = id;
+    public Image() {
     }
 
     public String getOwner() {
@@ -60,4 +59,20 @@ public class Image implements Serializable {
 
     //TODO: 이미지 파일을 서버에서 가져오는 함수 구현해야
 
+
+    public String getImageUri() {
+        return imageUri;
+    }
+
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }
