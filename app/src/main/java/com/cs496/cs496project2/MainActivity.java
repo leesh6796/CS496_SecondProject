@@ -413,30 +413,26 @@ public class MainActivity extends AppCompatActivity
         cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
 
 
-        //TODO 서버로 보내라:    이거 잘 작동하는 확인 필요, JSON으로 내부에 저장해둘것
+        //TODO 서버로 보내라:    이거 잘 작동하는 확인 필요, JSON으로 내부에 저장해둘것, ServerRequest 형식에 맞춰 수정할것
         JSONArray friends = new JSONArray();
-        try {
-            while (cursor.moveToNext()) {
-                JSONObject friend = new JSONObject(); //그냥 array만 해도 괜찮을듯
+        while (cursor.moveToNext()) {
+            JSONObject friend = new JSONObject(); //그냥 array만 해도 괜찮을듯
 
-                String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+            String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
-                Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
+            Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
 
-                //Log.i("MY INFO", id + " = " + name);
-                while (phoneCursor.moveToNext()) {
-                    String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    //Log.i("MY INFO", id + " = " + phoneNumber);
+            //Log.i("MY INFO", id + " = " + name);
+            while (phoneCursor.moveToNext()) {
+                String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                //Log.i("MY INFO", id + " = " + phoneNumber);
 
-                    //TODO
-                }
-
-                friends.put(friend);
+                //TODO
             }
-        } catch(JSONException e) {
-            e.printStackTrace();
+
+            friends.put(friend);
         }
 
 
