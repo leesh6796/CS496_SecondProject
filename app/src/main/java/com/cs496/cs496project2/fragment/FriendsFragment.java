@@ -56,23 +56,25 @@ public class FriendsFragment extends Fragment {
 
         while(cursor.moveToNext()) {
             Long id = cursor.getLong(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+
+            //TODO: 커서 에러!
             try {
+                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id.toString()}, null);
+                String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
-            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-            Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
-                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{ id.toString()  }, null);
-            String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id);
+                Uri photoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
 
-            Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id);
-            Uri photoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+                Friend friend = new Friend(phoneNumber, name);
+                friend.setProfileImageUri(photoUri);
 
-            Friend friend = new Friend(phoneNumber, name);
-            friend.setProfileImageUri(photoUri);
-
-            friends.add(friend);
+                friends.add(friend);
             } catch (CursorIndexOutOfBoundsException e) {
-                Log.w("cursor error", id.toString());
+                Log.w("      Cursor error", id.toString());
             }
+
 
         }
         cursor.close();
