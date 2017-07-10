@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -373,13 +374,19 @@ public class MainActivity extends AppCompatActivity
             super.onActivityResult(requestCode, resultCode, data);
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
+        //TODO: 제목, description추가해서 업로드, id는 mongo에서 관리
         else if(requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
-            //TODO
             Uri imageUri = Uri.parse(mCurrentPhotoPath);
-            Toast.makeText(getApplicationContext(), imageUri.toString(), Toast.LENGTH_LONG).show();
+            Log.d("chosen image", imageUri.toString());
         }
         else if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
-            //TODO
+            Uri uri = data.getData();
+            Log.d("chosen image", uri.toString());
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
