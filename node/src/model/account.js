@@ -6,12 +6,12 @@ var accountSchema = new Schema({
         phoneNumber : String,
         email : String,
         profilePictureURL : String,
-        contacts : [{
-                name : String,
-                phoneNumber : String,
-                email : String,
-                profilePicture : String,
-        }],
+        contacts : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
         gallery : [{
                 name : String,
                 path : String,
