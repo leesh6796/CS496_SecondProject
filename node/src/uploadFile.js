@@ -9,6 +9,10 @@ module.exports = {
                 var phoneNumber = req.params.phoneNumber;
                 var filename = req.params.filename;
 
+                if(phoneNumber == null || filename == null) {
+                        return res.send("need more parameters");
+                }
+
                 // MongoDB Account Schema에서 phoneNumber가 일치하는 Document를 찾는다.
                 Account.findOne({'phoneNumber':phoneNumber}, {'contacts':false}, (err, account) => {
                         console.log(filename);
