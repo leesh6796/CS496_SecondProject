@@ -19,7 +19,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
 public class ServerRequest {
-    private final String url = "http://13.124.149.1/";
+    private final String url = "http://52.79.188.97/";
     private final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public String getUrl() {
@@ -56,5 +56,9 @@ public class ServerRequest {
         }
 
         return null;
+    }
+
+    public String setContacts() {
+        return "";
     }
 }

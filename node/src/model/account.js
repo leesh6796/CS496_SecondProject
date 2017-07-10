@@ -21,3 +21,5 @@ var accountSchema = new Schema({
 });
 
 module.exports = mongoose.model('Account', accountSchema);
+
+//db.accounts.update({name:"이상현"},{$pull:{contacts:{$exists:true}}})

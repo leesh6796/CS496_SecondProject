@@ -27,8 +27,6 @@ module.exports = {
                 Account.find({'phoneNumber':phoneNumber}, (err, account) => {
                         if(err) return res.status(500).json({'error':err});
 
-                        console.log(account);
-
                         // phoneNumber 중복 안되면 새 account를 추가한다.
                         if(account.length == 0)
                         {
