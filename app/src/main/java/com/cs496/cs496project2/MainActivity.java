@@ -188,7 +188,6 @@ public class MainActivity extends AppCompatActivity
         HTTPTest();
 
         initViews();
-        initFacebook();
         myPhoneNumber = getMyPhoneNumber();
     }
 
@@ -292,36 +291,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initFacebook() {
-        //facebook login & get access token///////////////////////////////////////////////////////////////////////
-        callbackManager = CallbackManager.Factory.create();
 
-        LoginButton loginButton = (LoginButton) findViewById(R.id.btn_fb_login);
-        loginButton.setReadPermissions(Arrays.asList("public_profile", "email", "user_photos"));
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(JSONObject object, GraphResponse response) {
-                        Log.v("result",object.toString());
-                    }
-                });
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,nameView,email,gender,birthday");
-                graphRequest.setParameters(parameters);
-                graphRequest.executeAsync();
-                Toast.makeText(getApplicationContext(), "Logged In", Toast.LENGTH_SHORT).show();
-            }
-            @Override
-            public void onCancel() { }
-            @Override
-            public void onError(FacebookException error) {
-                Log.e("LoginErr",error.toString());
-            }
-        });
-
-        accessToken = AccessToken.getCurrentAccessToken();
-        /////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
     //전화번호 등록했는지 확인하고 안했으면 등록시킴, 전화번호 반환
