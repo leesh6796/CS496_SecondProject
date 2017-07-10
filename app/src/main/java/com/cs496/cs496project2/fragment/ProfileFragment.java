@@ -68,7 +68,7 @@ public class ProfileFragment extends Fragment {
             images = friend.getImages();
 
         } else {
-            //TODO: 내 프로필 -> 서버에서 받아올것
+            //TODO: 내 프로필: 사진만 서버에서 가져온다?
             //MainActivity.myPhoneNumber;
             images = new ArrayList<>();
             header = new Image("");
