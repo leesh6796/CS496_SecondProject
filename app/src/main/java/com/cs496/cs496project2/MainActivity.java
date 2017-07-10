@@ -58,6 +58,7 @@ import java.util.Date;
 
 
 import com.cs496.cs496project2.adapter.MainViewPagerAdapter;
+import com.cs496.cs496project2.helper.ServerRequest;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -86,11 +87,18 @@ public class MainActivity extends AppCompatActivity
     private TabLayout tabLayout;
     private String[] pageTitle = {"Friends", "Me", "Match"};
     private MainViewPagerAdapter pagerAdapter;
+
     private CallbackManager callbackManager;
     private AccessToken accessToken;
+
     ContentResolver resolver;
     Cursor cursor;
+
+    //TODO 이거 좀 깔끔하게 바꿔야..
     public static String myPhoneNumber = "";
+    public static String myEmail = "";
+    public static String myName = "";
+    public static String myProfileImageURL = "";
 
     static final int PICK_IMAGE_REQUEST = 2;
     static final int CAMERA_REQUEST = 3;
@@ -288,7 +296,7 @@ public class MainActivity extends AppCompatActivity
         callbackManager = CallbackManager.Factory.create();
 
         LoginButton loginButton = (LoginButton) findViewById(R.id.btn_fb_login);
-        loginButton.setReadPermissions(Arrays.asList("public_profile"));
+        loginButton.setReadPermissions(Arrays.asList("public_profile", "email", "user_photos"));
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -357,14 +365,19 @@ public class MainActivity extends AppCompatActivity
 
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
-                "/me?fields=picture.type(large)",
+                "/me?fields=picture.type(large),email,name",
                 null,
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
-                        //TODO: 페북에서 프로필 이미지 주소 가져와 업로드
+                        //TODO: 페북에서 프로필 이미지 주소/email 가져와 업로드
                         try {
-                            String profileImageURL = response.getJSONObject().getJSONObject("data").getString("url");
+                            myProfileImageURL = response.getJSONObject().getJSONObject("picture").getJSONObject("data").getString("url");
+                            myEmail = response.getJSONObject().getString("email");
+                            myName = response.getJSONObject().getString("name");
+
+                            ServerRequest serverRequest = new ServerRequest();
+                            serverRequest.addAccount(myName, myPhoneNumber, myEmail, myProfileImageURL);
 
                         } catch(JSONException e) {
                             e.printStackTrace();
@@ -400,33 +413,26 @@ public class MainActivity extends AppCompatActivity
         cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
 
 
-        //TODO 서버로 보내라:    이거 잘 작동하는 확인 필요, JSON으로 내부에 저장해둘것
+        //TODO 서버로 보내라:    이거 잘 작동하는 확인 필요, JSON으로 내부에 저장해둘것, ServerRequest 형식에 맞춰 수정할것
         JSONArray friends = new JSONArray();
-        try {
-            while (cursor.moveToNext()) {
-                JSONObject friend = new JSONObject(); //그냥 array만 해도 괜찮을듯
+        while (cursor.moveToNext()) {
+            JSONObject friend = new JSONObject(); //그냥 array만 해도 괜찮을듯
 
-                String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+            String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
-                Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
+            Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
 
-                //Log.i("MY INFO", id + " = " + name);
-                while (phoneCursor.moveToNext()) {
-                    String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    //Log.i("MY INFO", id + " = " + phoneNumber);
+            //Log.i("MY INFO", id + " = " + name);
+            while (phoneCursor.moveToNext()) {
+                String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                //Log.i("MY INFO", id + " = " + phoneNumber);
 
-                    //TODO 형식
-                    friend.put("?/", "asdf");
-
-
-                }
-
-                friends.put(friend);
+                //TODO
             }
-        } catch(JSONException e) {
-            e.printStackTrace();
+
+            friends.put(friend);
         }
 
 
@@ -469,7 +475,7 @@ public class MainActivity extends AppCompatActivity
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                Log.d("camera", "camera");
+                ex.printStackTrace();
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
@@ -487,7 +493,7 @@ public class MainActivity extends AppCompatActivity
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
-        String imageFileName = myPhoneNumber + timeStamp + "_";
+        String imageFileName = myPhoneNumber +"_" +  timeStamp;
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -508,20 +514,24 @@ public class MainActivity extends AppCompatActivity
             super.onActivityResult(requestCode, resultCode, data);
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
+
         //TODO: 제목, description추가해서 업로드, id는 mongo에서 관리
         //TODO: 이미지 이름 지정할 때 잘하기
         else if(requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             Uri imageUri = Uri.parse(mCurrentPhotoPath);
-            Log.d("chosen image", imageUri.toString());
+            String fileNameInDB = (new File(imageUri.toString())).getName();
+
+            Log.d("     captured image", fileNameInDB);
         }
         else if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
             Uri uri = data.getData();
-            Log.d("chosen image", uri.toString());
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+
+            String timeStamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
+            String fileNameInDB = myPhoneNumber + "_" + timeStamp + ".jpg";
+            Log.d("        chosen image", fileNameInDB);
+            //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+
         }
     }
 }

@@ -26,9 +26,7 @@ public class Image implements Serializable {
         this.owner = owner;
     }
 
-    public String getId() {
-        return id;
-    }
+    public String getId() { return id; }
 
     public void setId(String id) { this.id = id; }
 
@@ -61,6 +59,5 @@ public class Image implements Serializable {
     }
 
     //TODO: 이미지 파일을 서버에서 가져오는 함수 구현해야
-
 
 }
