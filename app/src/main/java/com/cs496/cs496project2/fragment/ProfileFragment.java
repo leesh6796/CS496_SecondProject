@@ -88,6 +88,8 @@ public class ProfileFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
+
+        //TODO: 이거 header에 간섭 받는지 확인
         recyclerView.addOnItemTouchListener(new ProfileAdapter.RecyclerTouchListener(getActivity().getApplicationContext(), recyclerView, new ProfileAdapter.ClickListener() {
             @Override
             public void onClick(View view, int position) {

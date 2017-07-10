@@ -42,11 +42,15 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -79,7 +83,7 @@ public class MainActivity extends AppCompatActivity
     private AccessToken accessToken;
     ContentResolver resolver;
     Cursor cursor;
-    public static String myPhoneNumber;
+    public static String myPhoneNumber = "";
 
     static final int PICK_IMAGE_REQUEST = 2;
     static final int CAMERA_REQUEST = 3;
@@ -292,7 +296,7 @@ public class MainActivity extends AppCompatActivity
         return myPhoneNumber;
     }
 
-    //TODO: 내 번호, 프로필 사진 설정, preference에 저장 -> dialog 띄우기
+
     private void register() {
 
         //get phonenumber.
@@ -317,15 +321,25 @@ public class MainActivity extends AppCompatActivity
         });
         dialog.show();
 
-        //TODO get profile pic uri from facebook.
+
+
+
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
-                "/me/picture?fields=full",
+                "/me?fields=picture.type(large)",
                 null,
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
-                        //TODO
+                        //TODO: 페북에서 프로필 이미지 주소 가져와 업로드
+                        try {
+                            String profileImageURL = response.getJSONObject().getJSONObject("data").getString("url");
+
+                        } catch(JSONException e) {
+                            e.printStackTrace();
+                        } catch(NullPointerException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
         ).executeAsync();
@@ -354,10 +368,36 @@ public class MainActivity extends AppCompatActivity
         resolver = this.getContentResolver();
         cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
 
-        //TODO 서버로 보내라,
-        while (cursor.moveToNext()) {
 
+        //TODO 서버로 보내라:    이거 잘 작동하는 확인 필요, JSON으로 내부에 저장해둘것
+        JSONArray friends = new JSONArray();
+        try {
+            while (cursor.moveToNext()) {
+                JSONObject friend = new JSONObject(); //그냥 array만 해도 괜찮을듯
+
+                String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+                Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
+
+                //Log.i("MY INFO", id + " = " + name);
+                while (phoneCursor.moveToNext()) {
+                    String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    //Log.i("MY INFO", id + " = " + phoneNumber);
+
+                    //TODO 형식
+                    friend.put("?/", "asdf");
+
+
+                }
+
+                friends.put(friend);
+            }
+        } catch(JSONException e) {
+            e.printStackTrace();
         }
+
 
 
 
@@ -383,14 +423,13 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void importFromLocalStorage() {
+    private void importFromLocalStorage() { //갤러리에서 선택 후 onActivityResult로
         Intent pickImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
         pickImageIntent.setType("image/*");
         startActivityForResult(pickImageIntent, PICK_IMAGE_REQUEST);
     }
 
-    private void camera() {
-
+    private void camera() { // -> 카메라 실행 후 onActivityResult로
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {

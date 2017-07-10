@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+//이미지 정보 저장
 public class Image implements Serializable {
     //사진은 서버에서 mobile/id 형식으로 지정될것
     private String owner, title, description; //owner: designated by phoneNumberView
@@ -59,7 +60,7 @@ public class Image implements Serializable {
         this.description = description;
     }
 
-    //TODO: 이미지 파일을 서버에서 가져오기
+    //TODO: 이미지 파일을 서버에서 가져오는 함수 구현해야
 
 
 }
