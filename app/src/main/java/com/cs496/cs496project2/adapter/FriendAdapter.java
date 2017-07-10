@@ -74,12 +74,12 @@ public class FriendAdapter extends BaseAdapter implements Filterable {
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
 
-            if(constraint != null && constraint.length() >0){
+            if(constraint != null && constraint.length() >0) {
                 constraint= constraint.toString().toUpperCase();
 
                 ArrayList<Friend> filters = new ArrayList<Friend>();
 
-                for(int i =0; i<filterList.size();i++){
+                for(int i =0; i<filterList.size();i++) {
                     if(filterList.get(i).getName().toUpperCase().contains(constraint) || filterList.get(i).getPhoneNumber().contains(constraint) || SoundSearcher.matchString(filterList.get(i).getName(),constraint.toString())){
                         Friend p = new Friend(filterList.get(i).getPhoneNumber());
                         filters.add(p);
@@ -90,7 +90,7 @@ public class FriendAdapter extends BaseAdapter implements Filterable {
                 results.values=filters;
 
 
-            }else{
+            } else {
                 results.count=filterList.size();
                 results.values=filterList;
             }

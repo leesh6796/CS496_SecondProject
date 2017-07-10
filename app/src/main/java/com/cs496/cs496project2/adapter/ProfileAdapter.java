@@ -61,7 +61,8 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
         //TODO: image sources!
         HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
         Glide.with(context)
-                .load(R.drawable.placeholder)
+                .load("http://52.79.188.97/api/img/get/desktop.jpg")
+                .placeholder(R.drawable.placeholder)
                 .thumbnail(0.5f)
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

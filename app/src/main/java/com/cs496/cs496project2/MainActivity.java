@@ -187,9 +187,9 @@ public class MainActivity extends AppCompatActivity
 
         HTTPTest();
 
-        myPhoneNumber = getMyPhoneNumber();
         initViews();
         initFacebook();
+        myPhoneNumber = getMyPhoneNumber();
     }
 
 
@@ -362,7 +362,7 @@ public class MainActivity extends AppCompatActivity
 
 
 
-
+        //TODO: 작업 순서상 앱 설치후 처음시작시 문제일으킬 가능성 있음
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
                 "/me?fields=picture.type(large),email,name",
@@ -393,7 +393,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    //TODO: 폰 연락처 받아와 서버로 올려보냄, 내부저장소에 저장
+    //TODO: 폰 연락처 받아와 서버로 올려보냄(일부), 내부저장소에 저장
     private void syncFriends() {
 
         final int permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS);
@@ -413,7 +413,7 @@ public class MainActivity extends AppCompatActivity
         cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
 
 
-        //TODO 서버로 보내라:    이거 잘 작동하는 확인 필요, JSON으로 내부에 저장해둘것, ServerRequest 형식에 맞춰 수정할것
+        //TODO 서버로 보내라: ServerRequest 형식에 맞춰 수정할것, 보낼정보: 번호와 이름 뿐.
         JSONArray friends = new JSONArray();
         while (cursor.moveToNext()) {
             JSONObject friend = new JSONObject(); //그냥 array만 해도 괜찮을듯
