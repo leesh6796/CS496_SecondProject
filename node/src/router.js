@@ -32,12 +32,4 @@ router.route('/api/:phoneNumber/get/gallery').get(account.getGallery);
 router.route('/api/picture/get/:filename').get(upload.getImage);
 
 
-/////////////////////////////////
-//Contact model은 따로 필요 없을 듯 하다. 그냥 Account에서 필요한 정보만 빼오는 방식으로 한면 될듯
-
-//어떤 사람의 모든 사진목록(프로필 제외)를 가져온다 -> ProfileFragment에서 사용,
-//나머지 기본 정보들은 get/friends에서 이미 받아온 것을 재사용할 것이므로 일반사진 목록만 받아오면 됨
-router.route('api/:phoneNumber/get/gallery');
-
-
 module.exports = router;

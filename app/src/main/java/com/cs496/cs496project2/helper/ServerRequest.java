@@ -131,4 +131,27 @@ public class ServerRequest {
 
         return null;
     }
+
+
+    public List<String> getGallery() {
+        OkHttpClient client = new OkHttpClient();
+
+        Request req = new Request.Builder().url(this.url + "api/" + phoneNumber + "/get/gallery").build();
+        try {
+            Response response = client.newCall(req).execute();
+            ArrayList<String> gallery = new ArrayList<>();
+            int i;
+
+            String[] urls = response.body().string().split(",");
+            for(i=0; i<urls.length; i++) {
+                gallery.add(url + urls[i]);
+            }
+
+            return gallery;
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

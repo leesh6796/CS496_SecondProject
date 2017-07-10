@@ -3,15 +3,20 @@ var Account = require('./model/account');
 
 module.exports = {
         uploadFile : (req, res) => {
+                // multer는 req.file에 업로드된 파일 정보를 저장한다.
+                // filename, originalname, path 등의 attribute를 가진다.
                 var file = req.file;
                 var phoneNumber = req.params.phoneNumber;
                 var filename = req.params.filename;
 
+                // MongoDB Account Schema에서 phoneNumber가 일치하는 Document를 찾는다.
                 Account.findOne({'phoneNumber':phoneNumber}, {'contacts':false}, (err, account) => {
-                        console.log("진입");
                         console.log(filename);
+
+                        // account에서 gallery json array만 가져온다.
                         var gallery = account.gallery;
 
+                        // gallery에 새로운 사진을 추가하고 replace.
                         gallery.push({
                                 "name" : "",
                                 "filename" : filename,
@@ -19,7 +24,7 @@ module.exports = {
                         });
 
                         account.gallery = gallery;
-                        account.save();
+                        account.save(); // 마지막에 꼭 save 해줘야 한다.
                 })
 
                 res.send(file);
@@ -30,6 +35,7 @@ module.exports = {
                 var filename = req.params.filename;
                 var extension = filename.split('.')[1];
 
+                // 파일 확장자(Extension)에 맞게 content-type을 정해준다.
                 var mime = {
                     html: 'text/html',
                     txt: 'text/plain',
@@ -42,8 +48,9 @@ module.exports = {
                     js: 'application/javascript'
                 };
 
+                // 파일을 읽을 때는 동기로 읽는다.
                 var img = fs.readFileSync('public/img/' + filename);
                 res.writeHead(200, {'Content-Type': mime[extension]});
-                res.end(img, 'binary');
+                res.end(img, 'binary'); // binary로 보낸다.
         }
 };

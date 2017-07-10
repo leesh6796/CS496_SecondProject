@@ -34,7 +34,9 @@ module.exports = {
                                         name:name,
                                         phoneNumber:phoneNumber,
                                         email:email,
-                                        profilePictureURL:profilePictureURL
+                                        profilePictureURL:profilePictureURL,
+                                        gallery : [],
+                                        contacts : []
                                 });
 
                                 newAccount.save();
