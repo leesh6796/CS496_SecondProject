@@ -32,6 +32,7 @@ import android.widget.Toast;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -56,6 +57,12 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 import static android.widget.Toast.makeText;
 
 public class MainActivity extends AppCompatActivity
@@ -77,12 +84,36 @@ public class MainActivity extends AppCompatActivity
     String mCurrentPhotoPath;
 
     private void HTTPTest() {
+        final String url = "http://13.124.149.1/";
+        final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
         new AsyncTask<Void, Void, Void>() {
             @Override
             public Void doInBackground(Void... args) {
                 Log.i("작업", "시작");
 
-                String dirPath = getFilesDir().getAbsolutePath();
+                JSONObject account = new JSONObject();
+                try {
+                    account.put("name", "이상현2");
+                    account.put("phoneNumber", "01068119122");
+                    account.put("email", "leesh6796@gmail.com");
+                    account.put("profilePictureURL", "test");
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+
+                OkHttpClient client = new OkHttpClient();
+                RequestBody body = RequestBody.create(JSON, account.toString());
+                Request req = new Request.Builder().url(url + "api/account/add").put(body).build();
+
+                try {
+                    Response response = client.newCall(req).execute();
+                    Log.i("Response", response.body().string());
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+
+                /*String dirPath = getFilesDir().getAbsolutePath();
                 File file = new File(dirPath);
 
                 // 일치하는 폴더가 없으면 생성
@@ -116,7 +147,7 @@ public class MainActivity extends AppCompatActivity
                     HttpResponse response = client.execute(post);
                 } catch(Exception e) {
                     e.printStackTrace();
-                }
+                }*/
 
                 return null;
             }

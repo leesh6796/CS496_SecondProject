@@ -11,19 +11,22 @@ var storage = multer.diskStorage({
         destination: (req, file, cb) => {
                 cb(null, 'public/img/');
         },
-        filename: (req,file, cb) => {
-                cb(null, file.originalname);
+        filename: (req, file, cb) => {
+                cb(null, /*file.originalname*/req.params.filename);
         }
 });
 var multerInstance = multer({storage:storage});
 
 router.route('/api/account/get/:phoneNumber').get(account.getAccountInfo);
-router.route('/api/account/add/:name/:phoneNumber/:email').put(account.addAccount);
+//router.route('/api/account/add/:name/:phoneNumber/:email/:profilePictureURL').put(account.addAccount);
+router.route('/api/account/add').put(account.addAccount);
 
 router.route('/api/contacts/get/:phoneNumber').get(contact.getContacts);
 router.route('/api/contacts/add/:accountPhoneNumber/:name/:phoneNumber/:email').put(contact.getContacts);
 
 // atachment는 form의 input file name attribute를 의미한다.
-router.route('/api/upload/picture/:phoneNumber').post(multerInstance.single('attachment'), upload.uploadFile);
+router.route('/api/upload/picture/:phoneNumber/:filename').post(multerInstance.single('attachment'), upload.uploadFile);
+
+router.route('/api/json/:phoneNumber').post(upload.uploadFile);
 
 module.exports = router;

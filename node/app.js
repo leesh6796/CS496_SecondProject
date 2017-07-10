@@ -30,8 +30,8 @@ app.use('/', router);
 // Mongoose라는 ODM을 사용한다.
 var db = mongoose.connection;
 db.on('error', console.error);
-db.once('open', () => {
-        console.log("Connected to mongod server);");
+db.once('openUri', () => {
+        console.log("Connected to mongod server;");
 });
 
 mongoose.connect("mongodb://localhost/CS496");

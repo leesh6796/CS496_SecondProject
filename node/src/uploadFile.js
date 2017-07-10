@@ -1,4 +1,5 @@
 var fs = require('fs');
+var account =
 
 module.exports = {
         uploadFile : (req, res) => {

@@ -5,15 +5,18 @@ var accountSchema = new Schema({
         name : String,
         phoneNumber : String,
         email : String,
+        profilePictureURL : String,
         contacts : [{
                 name : String,
                 phoneNumber : String,
                 email : String,
                 profilePicture : String,
         }],
-        photos : [{
+        gallery : [{
                 name : String,
-                path : String
+                path : String,
+                // Version은 hash로 관리된다.
+                version : String
         }]
 });
 
