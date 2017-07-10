@@ -45,5 +45,33 @@ module.exports = {
 
                         res.send();
                 });
+        },
+
+        getGallery : (req, res) => {
+                var phoneNumber = req.params.phoneNumber;
+
+                Account.findOne({'phoneNumber' : phoneNumber}, 'gallery.filename', (err, account) => {
+                        if(err) return res.status(500).json({'error':err});
+
+                        // 해당 phoneNumber 가진 account가 없다면
+                        if(account == null) {
+                                console.log("NULL 감지");
+                        } else {
+                                var gallery = account.gallery;
+                                var returnValue = "";
+
+                                gallery.forEach((element, index, array) => {
+                                        returnValue += "api/picture/get/" + element.filename;
+                                        if(index < gallery.length - 1)
+                                                returnValue += ",";
+                                });
+
+                                console.log(returnValue);
+
+                                return res.send(returnValue)
+                        }
+
+                        return res.send("OK");
+                });
         }
 };
