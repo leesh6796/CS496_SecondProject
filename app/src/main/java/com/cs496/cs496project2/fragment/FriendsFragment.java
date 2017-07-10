@@ -50,34 +50,36 @@ public class FriendsFragment extends Fragment {
     public void onCreate(Bundle savedInstances) {
         super.onCreate(savedInstances);
         friends.clear();
-        //TODO: 먼저 내부저장소에서 정보가져온다. 그 후 서버에도 정보가 있으면 덮어쓴다(프로필 사진을) 중복?
-        resolver = this.getActivity().getApplicationContext().getContentResolver();
-        cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
 
-        while(cursor.moveToNext()) {
-            Long id = cursor.getLong(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-
-            //TODO: 커서 에러!
-            try {
-                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id.toString()}, null);
-                String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-
-                Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id);
-                Uri photoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
-
-                Friend friend = new Friend(phoneNumber, name);
-                friend.setProfileImageUri(photoUri);
-
-                friends.add(friend);
-            } catch (CursorIndexOutOfBoundsException e) {
-                Log.w("      Cursor error", id.toString());
-            }
-
-
-        }
-        cursor.close();
+//
+//        //TODO: 먼저 내부저장소에서 정보가져온다. 그 후 서버에도 정보가 있으면 덮어쓴다(프로필 사진을) 중복?
+//        resolver = this.getActivity().getApplicationContext().getContentResolver();
+//        cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+//
+//        while(cursor.moveToNext()) {
+//            Long id = cursor.getLong(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+//
+//            //TODO: 커서 에러!
+//            try {
+//                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+//                Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+//                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id.toString()}, null);
+//                String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+//
+//                Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id);
+//                Uri photoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+//
+//                Friend friend = new Friend(phoneNumber, name);
+//                friend.setProfileImageUri(photoUri);
+//
+//                friends.add(friend);
+//            } catch (CursorIndexOutOfBoundsException e) {
+//                Log.w("      Cursor error", id.toString());
+//            }
+//
+//
+//        }
+//        cursor.close();
 
 
         //TODO 서버에 각 친구에 대한 요청

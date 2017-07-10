@@ -4,10 +4,6 @@
     <item android:title="Friends">
         <menu>
             <item
-                android:id="@+id/nav_register"
-                android:icon="@android:drawable/stat_notify_sync"
-                android:title="Register" />
-            <item
                 android:id="@+id/nav_sync_friends"
                 android:icon="@android:drawable/stat_notify_sync"
                 android:title="Sync Friends" />
