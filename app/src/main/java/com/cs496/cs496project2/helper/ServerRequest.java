@@ -4,6 +4,9 @@ package com.cs496.cs496project2.helper;
  * Created by memorial on 2017. 7. 10..
  */
 
+import com.cs496.cs496project2.MainActivity;
+import com.cs496.cs496project2.model.Friend;
+
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -16,7 +19,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServerRequest {
     private final String url = "http://52.79.188.97/";
@@ -58,7 +65,70 @@ public class ServerRequest {
         return null;
     }
 
-    public String setContacts() {
-        return "";
+    public String setContacts(List<Friend> friends) {
+        OkHttpClient client = new OkHttpClient();
+
+        JSONObject contacts = new JSONObject();
+        try {
+            contacts.put("accountPhoneNumber", MainActivity.myPhoneNumber);
+            JSONArray arrFriends = new JSONArray();
+
+            int i;
+            for(i=0; i<friends.size(); i++) {
+                JSONObject body = new JSONObject();
+                Friend iter = friends.get(i);
+                body.put("name", iter.getName());
+                body.put("phoneNumber", iter.getPhoneNumber());
+                body.put("email", iter.getEmail());
+                body.put("profilePicture", "");
+
+                arrFriends.put(body);
+            }
+
+            contacts.put("contacts", arrFriends);
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        RequestBody reqBody = RequestBody.create(JSON, contacts.toString());
+        Request req = new Request.Builder().url(this.url + "api/contacts/set").put(reqBody).build();
+
+        try {
+            Response res = client.newCall(req).execute();
+            return res.body().string();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public List<Friend> getContacts() {
+        OkHttpClient client = new OkHttpClient();
+
+        Request req = new Request.Builder().url(this.url + "api/contacts/get/" + MainActivity.myPhoneNumber).build();
+        try {
+            Response response = client.newCall(req).execute();
+            JSONArray contacts = new JSONArray(response.body().string());
+
+            List<Friend> friends = new ArrayList<Friend>();
+            int i;
+
+            for(i=0; i<contacts.length(); i++) {
+                JSONObject iter = contacts.getJSONObject(i);
+                Friend item = new Friend(iter.getString("phoneNumber"));
+                item.setName(iter.getString("name"));
+                item.setEmail(iter.getString("email"));
+
+                friends.add(item);
+            }
+
+            return friends;
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
