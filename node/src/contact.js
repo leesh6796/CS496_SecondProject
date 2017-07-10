@@ -22,7 +22,8 @@ module.exports = {
 
                 var accountPhoneNumber = req.params.phoneNumber;
                 //var length = int(body.length);
-                var contacts = JSON.parse(body.contacts);
+                console.log(body.contacts);
+                var contacts = body.contacts;
                 var i;
 
                 Account.findOne({'phoneNumber':accountPhoneNumber}, 'contacts', (err, account) => {

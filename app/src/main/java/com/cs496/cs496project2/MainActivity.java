@@ -53,12 +53,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
 
 import com.cs496.cs496project2.adapter.MainViewPagerAdapter;
 import com.cs496.cs496project2.helper.ServerRequest;
+import com.cs496.cs496project2.model.Friend;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -104,6 +106,8 @@ public class MainActivity extends AppCompatActivity
     static final int CAMERA_REQUEST = 3;
     String mCurrentPhotoPath;
 
+    private ArrayList<Friend> rv = new ArrayList<>();
+
     private void HTTPTest() {
         final String url = "http://13.124.149.1/";
         final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -112,27 +116,15 @@ public class MainActivity extends AppCompatActivity
             @Override
             public Void doInBackground(Void... args) {
                 Log.i("작업", "시작");
+                ServerRequest req = new ServerRequest();
 
-                JSONObject account = new JSONObject();
-                try {
-                    account.put("name", "이상현2");
-                    account.put("phoneNumber", "01068119122");
-                    account.put("email", "leesh6796@gmail.com");
-                    account.put("profilePictureURL", "test");
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
+                rv = (ArrayList)req.getContacts();
+                Friend fr = new Friend("01099990000", "test4");
+                rv.add(fr);
 
-                OkHttpClient client = new OkHttpClient();
-                RequestBody body = RequestBody.create(JSON, account.toString());
-                Request req = new Request.Builder().url(url + "api/account/add").put(body).build();
+                req.setContacts(rv);
 
-                try {
-                    Response response = client.newCall(req).execute();
-                    Log.i("Response", response.body().string());
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
+                rv = (ArrayList)req.getContacts();
 
                 /*String dirPath = getFilesDir().getAbsolutePath();
                 File file = new File(dirPath);
@@ -175,7 +167,12 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onPostExecute(final Void result) {
-                Log.i("파일 전송", "Success");
+                int i;
+                for(i=0; i<rv.size(); i++) {
+                    Log.i("Gallery", rv.get(i).getName());
+                    Log.i("Gallery", rv.get(i).getPhoneNumber());
+                }
+
             }
         }.execute();
     }
@@ -185,11 +182,13 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        myPhoneNumber = "01082169122";
         HTTPTest();
 
         initViews();
         initFacebook();
-        myPhoneNumber = getMyPhoneNumber();
+
+        //myPhoneNumber = getMyPhoneNumber();
     }
 
 
