@@ -61,7 +61,8 @@ public class ProfileFragment extends Fragment {
         if (args != null) {
             //전달받은 친구 프로필 <- 친구의 정보는 friendfragment에서 받아오므로 여기서는 데이터를 사용만 한다
             Friend friend = (Friend) args.getSerializable("friend");
-            header = friend.getProfileImage();
+            header = new Image();
+            header.setImageUrl(friend.getProfileImageUrl());
             header.setTitle(friend.getName());
             header.setDescription(friend.getEmail());
             //이미지 받아오기
@@ -71,9 +72,8 @@ public class ProfileFragment extends Fragment {
             //TODO: 내 프로필: 사진만 서버에서 가져온다?
             //MainActivity.myPhoneNumber;
             images = new ArrayList<>();
-            header = new Image("");
-            images.add(null);images.add(null);images.add(null);images.add(null);images.add(null);
-            images.add(null);images.add(null);images.add(null);images.add(null);images.add(null);
+            header = new Image();
+            header.setImageUrl(MainActivity.myProfileImageURL);
         }
 
 

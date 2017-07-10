@@ -56,7 +56,7 @@ public class FriendAdapter extends BaseAdapter implements Filterable {
         Friend item = items.get(position);
         view.setName(item.getName());
         view.setPhoneNumber(item.getPhoneNumber());
-        view.setImage(item.getProfileImage());
+        view.setImage(item.getProfileImageUrl());
 
         return view;
     }

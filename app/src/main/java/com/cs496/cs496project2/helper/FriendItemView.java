@@ -1,6 +1,7 @@
 package com.cs496.cs496project2.helper;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
@@ -11,6 +12,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.cs496.cs496project2.R;
 import com.cs496.cs496project2.model.Image;
+
+import java.io.File;
 
 //좀 이상하다.
 public class FriendItemView extends FrameLayout {
@@ -55,10 +58,18 @@ public class FriendItemView extends FrameLayout {
         profileImageView.setImageBitmap(bitmap);
     }*/
 
-    public void setImage(Image image) {
-        //TODO 이미지 소스
+    public void setImage(String imageUrl) {
         Glide.with(context)
-                .load("") //id 기반 http 요청?
+                .load(imageUrl)
+                .placeholder(R.drawable.placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .crossFade()
+                .into(profileImageView);
+    }
+
+    public void setImage(Uri imageUri) {
+        Glide.with(context)
+                .load(imageUri)
                 .placeholder(R.drawable.placeholder)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .crossFade()

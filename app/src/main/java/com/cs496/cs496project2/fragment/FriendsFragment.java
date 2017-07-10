@@ -2,8 +2,11 @@ package com.cs496.cs496project2.fragment;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
@@ -12,6 +15,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +29,6 @@ import com.cs496.cs496project2.adapter.FriendAdapter;
 import com.cs496.cs496project2.model.Friend;
 
 import java.util.ArrayList;
-
-import static android.widget.Toast.makeText;
 
 
 public class FriendsFragment extends Fragment {
@@ -47,10 +49,36 @@ public class FriendsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstances) {
         super.onCreate(savedInstances);
-
+        friends.clear();
         //TODO: 먼저 내부저장소에서 정보가져온다. 그 후 서버에도 정보가 있으면 덮어쓴다(프로필 사진을) 중복?
         resolver = this.getActivity().getApplicationContext().getContentResolver();
         cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+
+        while(cursor.moveToNext()) {
+            Long id = cursor.getLong(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+            try {
+
+            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+            Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{ id.toString()  }, null);
+            String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+            Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id);
+            Uri photoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+
+            Friend friend = new Friend(phoneNumber, name);
+            friend.setProfileImageUri(photoUri);
+
+            friends.add(friend);
+            } catch (CursorIndexOutOfBoundsException e) {
+                Log.w("cursor error", id.toString());
+            }
+
+        }
+        cursor.close();
+
+
+        //TODO 서버에 각 친구에 대한 요청
     }
 
     @Override
