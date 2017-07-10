@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.cs496.cs496project2.R;
+import com.cs496.cs496project2.model.Image;
 
 //좀 이상하다.
 public class FriendItemView extends FrameLayout {
@@ -54,7 +55,8 @@ public class FriendItemView extends FrameLayout {
         profileImageView.setImageBitmap(bitmap);
     }*/
 
-    public void setImage(int id) {
+    public void setImage(Image image) {
+        //TODO 이미지 소스
         Glide.with(context)
                 .load("") //id 기반 http 요청?
                 .placeholder(R.drawable.placeholder)

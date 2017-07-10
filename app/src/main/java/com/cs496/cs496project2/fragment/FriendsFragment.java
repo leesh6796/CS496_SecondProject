@@ -35,6 +35,7 @@ public class FriendsFragment extends Fragment {
         super.onCreate(savedInstances);
 
         //TODO: 서버에서 친구 정보 가져와라 가 아니라 내부저장소에 저장한 것을 불러오도록 하자
+        //id번호에 해당하는 이름, 프로필 주소 ...
 
     }
 
@@ -51,7 +52,6 @@ public class FriendsFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterVIew, View view, int position, long id){
                 Friend friend = (Friend) adapter.getItem(position);
 
-                //TODO: ProfileFragment에 적절한 정보 넘긴다.
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("friend", friend);
                 FragmentTransaction ft = getFragmentManager().beginTransaction();

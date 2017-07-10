@@ -6,14 +6,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+//이미지 정보 저장
 public class Image implements Serializable {
     //사진은 서버에서 mobile/id 형식으로 지정될것
     private String owner, title, description; //owner: designated by phoneNumberView
-    private int id;
+    private String id;
     private Date date;
     private static DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyy '@' hh:mm aaa", Locale.ENGLISH);
 
-    public Image(int id) {
+    public Image(String id) {
         this.id = id;
     }
 
@@ -25,11 +26,11 @@ public class Image implements Serializable {
         this.owner = owner;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) { this.id = id; }
+    public void setId(String id) { this.id = id; }
 
     public String getTitle() {
         return title;
@@ -59,7 +60,7 @@ public class Image implements Serializable {
         this.description = description;
     }
 
-
+    //TODO: 이미지 파일을 서버에서 가져오는 함수 구현해야
 
 
 }

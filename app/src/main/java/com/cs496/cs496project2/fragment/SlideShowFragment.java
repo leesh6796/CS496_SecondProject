@@ -120,6 +120,8 @@ public class SlideShowFragment extends DialogFragment {
 
             ImageView fullImageView = (ImageView) view.findViewById(R.id.full_image_view);
 
+
+            //TODO imagesource
             Glide.with(getActivity())
                     .load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNDJerebYjU3S4HUgWYwDAN1MSq0R8ARqGIjP4NQyDfN885fXt")
                     .placeholder(R.drawable.placeholder)
@@ -130,6 +132,8 @@ public class SlideShowFragment extends DialogFragment {
 
             container.addView(view);
 
+
+/*
             fullImageView.setOnClickListener(new ImageView.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -146,7 +150,7 @@ public class SlideShowFragment extends DialogFragment {
                     }
                 }
 
-            });
+            });*/
 
             return view;
         }

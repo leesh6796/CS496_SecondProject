@@ -2,10 +2,14 @@ package com.cs496.cs496project2;
 
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -20,6 +24,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +32,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
@@ -36,11 +43,15 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -54,6 +65,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -78,6 +90,7 @@ public class MainActivity extends AppCompatActivity
     private AccessToken accessToken;
     ContentResolver resolver;
     Cursor cursor;
+    public static String myPhoneNumber = "";
 
     static final int PICK_IMAGE_REQUEST = 2;
     static final int CAMERA_REQUEST = 3;
@@ -166,7 +179,7 @@ public class MainActivity extends AppCompatActivity
 
         HTTPTest();
 
-        //toolbar setup
+        myPhoneNumber = getMyPhoneNumber();
         initViews();
         initFacebook();
     }
@@ -275,7 +288,7 @@ public class MainActivity extends AppCompatActivity
         callbackManager = CallbackManager.Factory.create();
 
         LoginButton loginButton = (LoginButton) findViewById(R.id.btn_fb_login);
-        loginButton.setReadPermissions(Arrays.asList("public_profile", "user_friends"));
+        loginButton.setReadPermissions(Arrays.asList("public_profile"));
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -303,14 +316,71 @@ public class MainActivity extends AppCompatActivity
         /////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
+    //전화번호 등록했는지 확인하고 안했으면 등록시킴, 전화번호 반환
+    public String getMyPhoneNumber() {
+        SharedPreferences pref = getSharedPreferences("my_phone_number", 0);
+        String myPhoneNumber = pref.getString("my_phone_number", "");
+        if (myPhoneNumber.equals("")) {
+            register();
+        }
+        myPhoneNumber = pref.getString("my_phone_number", "");
+        return myPhoneNumber;
+    }
 
-    //TODO: 내 번호, 프로필 사진 설정, preference에 저장?
+
     private void register() {
 
-    };
+        //get phonenumber.
+        SharedPreferences pref = getSharedPreferences("my_phone_number", 0);
+        String temp = pref.getString("my_phone_number", "");
+        final SharedPreferences.Editor edit = pref.edit();
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Register");
+        dialog.setMessage("Enter your phone number to register");
+        final EditText editText = new EditText(this);
+        editText.setText(temp);
+        dialog.setView(editText);
+        dialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String phoneNumber = editText.getText().toString();
+                Log.d("My Phone Number", phoneNumber);
+                edit.putString("my_phone_number", phoneNumber);
+                edit.commit();
+            }
+        });
+        dialog.show();
 
 
-    //TODO: 폰 연락처 받아와 서버로 올려보냄, 내부저장소에 저장, 내 정보를 sharedpref에 저장
+
+
+        new GraphRequest(
+                AccessToken.getCurrentAccessToken(),
+                "/me?fields=picture.type(large)",
+                null,
+                HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        //TODO: 페북에서 프로필 이미지 주소 가져와 업로드
+                        try {
+                            String profileImageURL = response.getJSONObject().getJSONObject("data").getString("url");
+
+                        } catch(JSONException e) {
+                            e.printStackTrace();
+                        } catch(NullPointerException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        ).executeAsync();
+
+
+        syncFriends();
+    }
+
+
+    //TODO: 폰 연락처 받아와 서버로 올려보냄, 내부저장소에 저장
     private void syncFriends() {
 
         final int permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS);
@@ -328,7 +398,41 @@ public class MainActivity extends AppCompatActivity
 
         resolver = this.getContentResolver();
         cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
-        //TODO 서버로 보내라
+
+
+        //TODO 서버로 보내라:    이거 잘 작동하는 확인 필요, JSON으로 내부에 저장해둘것
+        JSONArray friends = new JSONArray();
+        try {
+            while (cursor.moveToNext()) {
+                JSONObject friend = new JSONObject(); //그냥 array만 해도 괜찮을듯
+
+                String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+                Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
+
+                //Log.i("MY INFO", id + " = " + name);
+                while (phoneCursor.moveToNext()) {
+                    String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    //Log.i("MY INFO", id + " = " + phoneNumber);
+
+                    //TODO 형식
+                    friend.put("?/", "asdf");
+
+
+                }
+
+                friends.put(friend);
+            }
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
 
         /*while(cursor.moveToNext()){
             String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
@@ -350,13 +454,13 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void importFromLocalStorage() {
+    private void importFromLocalStorage() { //갤러리에서 선택 후 onActivityResult로
         Intent pickImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
         pickImageIntent.setType("image/*");
         startActivityForResult(pickImageIntent, PICK_IMAGE_REQUEST);
     }
 
-    private void camera() {
+    private void camera() { // -> 카메라 실행 후 onActivityResult로
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -382,8 +486,8 @@ public class MainActivity extends AppCompatActivity
     //helper for camera()
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        String timeStamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
+        String imageFileName = myPhoneNumber + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -404,13 +508,20 @@ public class MainActivity extends AppCompatActivity
             super.onActivityResult(requestCode, resultCode, data);
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
+        //TODO: 제목, description추가해서 업로드, id는 mongo에서 관리
+        //TODO: 이미지 이름 지정할 때 잘하기
         else if(requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
-            //TODO
             Uri imageUri = Uri.parse(mCurrentPhotoPath);
-            Toast.makeText(getApplicationContext(), imageUri.toString(), Toast.LENGTH_LONG).show();
+            Log.d("chosen image", imageUri.toString());
         }
         else if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
-            //TODO
+            Uri uri = data.getData();
+            Log.d("chosen image", uri.toString());
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

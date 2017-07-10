@@ -1,11 +1,13 @@
 package com.cs496.cs496project2.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Friend implements Serializable {
 
     private String phoneNumber, name, email;
-    private int[] imageIDs;
+    private Image profileImage;
+    private ArrayList<Image> images;
 
     public Friend(String phoneNumber) {
         this.phoneNumber = phoneNumber;
@@ -35,12 +37,16 @@ public class Friend implements Serializable {
         this.email = email;
     }
 
-    public int[] getImageIDs() {
-        return imageIDs;
+    public Image getProfileImage() { return profileImage; }
+
+    public void setProfileImage(Image profileImage) { this.profileImage = profileImage; }
+
+    public ArrayList<Image> getImages() {
+        return images;
     }
 
-    public void setImageIDs(int[] imageIDs) {
-        this.imageIDs = imageIDs;
+    public void setImages(ArrayList<Image> imageIDs) {
+        this.images = imageIDs;
     }
 
 }
