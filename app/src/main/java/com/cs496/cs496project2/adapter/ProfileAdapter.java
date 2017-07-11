@@ -1,25 +1,35 @@
 package com.cs496.cs496project2.adapter;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.cs496.cs496project2.MainActivity;
 import com.cs496.cs496project2.R;
+import com.cs496.cs496project2.helper.ServerRequest;
 import com.cs496.cs496project2.model.Image;
 import com.karumi.headerrecyclerview.HeaderRecyclerViewAdapter;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewHolder, Image, Image, Image> {
 
     private Context context;
+    private String phoneNumber;
+    ArrayList<String> urls = new ArrayList<>();
 
     public class HeaderViewHolder extends RecyclerView.ViewHolder {
         public ImageView profileImageView;
@@ -42,12 +52,22 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
     }
 
 
-    public ProfileAdapter(Context context) {
+    public ProfileAdapter(Context context, final String phoneNumber) {
         this.context = context;
+        this.phoneNumber = phoneNumber;
+        urls.clear();
+        (new AsyncTask<Void,Void,Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                List<String> temp = (new ServerRequest()).getGallery(phoneNumber);
+                for(String url : temp) urls.add(url);
+                return null;
+            }
+        }).execute();
     }
 
 
-    //TODO: getHeader(), getItems()로 항목 접근!
+    //TODO: getHeader(), getItems()로 항목 접근
 
 
     @Override
@@ -59,9 +79,11 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
 
     @Override
     protected void onBindHeaderViewHolder(RecyclerView.ViewHolder holder, int position) {
-        //TODO: image sources!
+        //TODO:이거 왜인지 작동 안함 ???
         HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
+        Log.e("               ", getHeader().getImageUrl());
         Glide.with(context)
+                //.load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNDJerebYjU3S4HUgWYwDAN1MSq0R8ARqGIjP4NQyDfN885fXt")
                 .load(getHeader().getImageUrl())
                 .placeholder(R.drawable.placeholder)
                 .thumbnail(0.5f)
@@ -82,9 +104,9 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
     public void onBindItemViewHolder(RecyclerView.ViewHolder holder, int position) {
         ImageViewHolder imageViewHolder = (ImageViewHolder) holder;
 
-        //TODO: image sources!
+        //TODO: image sources! -> 으악
         Glide.with(context)
-                .load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNDJerebYjU3S4HUgWYwDAN1MSq0R8ARqGIjP4NQyDfN885fXt")
+                .load(urls.get(position))
                 .placeholder(R.drawable.placeholder)
                 .thumbnail(0.5f)
                 .crossFade()

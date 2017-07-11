@@ -61,18 +61,9 @@
             app:headerLayout="@layout/nav_header"
             app:menu="@menu/drawer_menu">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <com.facebook.login.widget.LoginButton
-                    android:id="@+id/btn_fb_login"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_margin="6dp"
-                    facebook:com_facebook_confirm_logout="true"
-                    facebook:com_facebook_tooltip_mode="never_display" />
-            </RelativeLayout>
+
+
+
 
         </android.support.design.widget.NavigationView>
 
