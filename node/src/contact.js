@@ -14,6 +14,7 @@ module.exports = {
                         }
 
                         res.json(account.contacts);
+                        console.log("[" + new Date().toLocaleString() + "] " + phoneNumber +"가 Contact Request");
                 })
         },
 
@@ -35,6 +36,7 @@ module.exports = {
                         account.save();
 
                         res.send("success");
+                        console.log("[" + new Date().toLocaleString() + "] " + accountPhoneNumber +"가 Set Contact");
                 });
         }
 
