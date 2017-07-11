@@ -160,7 +160,7 @@ public class ServerRequest {
     public void uploadFile(String filename, File file) {
         HttpClient client = new DefaultHttpClient();
 
-        HttpPost post = new HttpPost(url + "api/" + myPhoneNumber +"upload/picture/" + filename);
+        HttpPost post = new HttpPost(url + "api/" + myPhoneNumber +"/upload/picture/" + filename);
 
         MultipartEntity reqEntity = new MultipartEntity();
         reqEntity.addPart("attachment", new FileBody(file));
