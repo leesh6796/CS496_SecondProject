@@ -55,25 +55,18 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
     public ProfileAdapter(Context context, final String phoneNumber) {
         this.context = context;
         this.phoneNumber = phoneNumber;
+    }
+
+    public void galleryUpdate() {
         urls.clear();
         (new AsyncTask<Void,Void,List<String>>() {
             @Override
-<<<<<<< HEAD
-            protected Void doInBackground(Void... voids) {
-                List<String> temp = (new ServerRequest()).getGallery(phoneNumber);
-                for(String url : temp) {
-                    Log.i("어라 추가", url);
-                    urls.add(url);
-                }
-                return null;
-=======
             protected List<String> doInBackground(Void... voids) {
                 return (new ServerRequest()).getGallery(phoneNumber);
             }
             @Override
             protected void onPostExecute(List<String> temp) {
                 for(String url : temp) urls.add(url);
->>>>>>> 3c4d6ac42881866247e952a4180fdc75604283b0
             }
         }).execute();
     }

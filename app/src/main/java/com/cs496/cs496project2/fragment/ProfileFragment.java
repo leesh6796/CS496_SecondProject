@@ -110,12 +110,15 @@ public class ProfileFragment extends Fragment {
             }
         }));
 
+        update();
+
         //fetchImages();
         return view;
     }
 
     public void update() {
-
+        adapter.galleryUpdate();
+        adapter.notifyDataSetChanged();
     }
 
 }
