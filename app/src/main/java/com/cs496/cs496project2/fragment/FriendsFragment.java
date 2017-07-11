@@ -1,37 +1,24 @@
 package com.cs496.cs496project2.fragment;
 
-import android.Manifest;
 import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.CursorIndexOutOfBoundsException;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.cs496.cs496project2.R;
 import com.cs496.cs496project2.adapter.FriendAdapter;
-import com.cs496.cs496project2.helper.ServerRequest;
 import com.cs496.cs496project2.model.Friend;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class FriendsFragment extends Fragment {

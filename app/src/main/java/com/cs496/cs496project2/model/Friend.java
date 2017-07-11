@@ -1,5 +1,6 @@
 package com.cs496.cs496project2.model;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 
@@ -65,12 +66,12 @@ public class Friend implements Serializable {
         return images;
     }
 
-    public ArrayList<Image> fetchImages() {
+    public ArrayList<Image> fetchImages(final Context context) {
         images.clear();
         (new AsyncTask<Void,Void,Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                List<String> urls = (new ServerRequest()).getGallery(phoneNumber);
+                List<String> urls = (new ServerRequest(context)).getGallery(phoneNumber);
                 for (String url : urls) {
                     Image image = new Image();
                     image.setImageUrl(url);
