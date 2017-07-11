@@ -4,14 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.cs496.cs496project2.MainActivity;
 import com.cs496.cs496project2.model.Friend;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -23,20 +16,20 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class ServerRequest {
-    private final String url = "http://52.79.188.97/";
-    private final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    private final String myPhoneNumber;
+    public static final String url = "http://52.79.188.97/";
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private String myPhoneNumber;
 
-    public String getUrl() {
-        return this.url;
-    }
-
-    public  ServerRequest() {myPhoneNumber = MainActivity.myPhoneNumber;}
     public ServerRequest(Context context) {
         SharedPreferences pref = context.getSharedPreferences("registration", 0);
         myPhoneNumber = pref.getString("phone_number", "");
@@ -58,7 +51,7 @@ public class ServerRequest {
         }
 
         RequestBody reqBody = RequestBody.create(JSON, account.toString());
-        Request req = new Request.Builder().url(this.url + "api/account/add").put(reqBody).build();
+        Request req = new Request.Builder().url(url + "api/account/add").put(reqBody).build();
 
         try {
             Response res = client.newCall(req).execute();
@@ -94,7 +87,7 @@ public class ServerRequest {
         }
 
         RequestBody reqBody = RequestBody.create(JSON, contacts.toString());
-        Request req = new Request.Builder().url(this.url + "api/" + this.myPhoneNumber + "/set/friends").put(reqBody).build();
+        Request req = new Request.Builder().url(url + "api/" + myPhoneNumber + "/set/friends").put(reqBody).build();
 
         try {
             Response res = client.newCall(req).execute();
@@ -109,12 +102,12 @@ public class ServerRequest {
     public List<Friend> getContacts() {
         OkHttpClient client = new OkHttpClient();
 
-        Request req = new Request.Builder().url(this.url + "api/" + this.myPhoneNumber + "/get/friends").build();
+        Request req = new Request.Builder().url(url + "api/" + myPhoneNumber + "/get/friends").build();
         try {
             Response response = client.newCall(req).execute();
             JSONArray contacts = new JSONArray(response.body().string());
 
-            List<Friend> friends = new ArrayList<Friend>();
+            List<Friend> friends = new ArrayList<>();
             int i;
 
             for(i=0; i<contacts.length(); i++) {
@@ -138,7 +131,7 @@ public class ServerRequest {
     public List<String> getGallery(String phoneNumber) {
         OkHttpClient client = new OkHttpClient();
 
-        Request req = new Request.Builder().url(this.url + "api/" + phoneNumber + "/get/gallery").build();
+        Request req = new Request.Builder().url(url + "api/" + phoneNumber + "/get/gallery").build();
         try {
             Response response = client.newCall(req).execute();
             ArrayList<String> gallery = new ArrayList<>();
@@ -160,7 +153,7 @@ public class ServerRequest {
     public void uploadFile(String filename, File file) {
         HttpClient client = new DefaultHttpClient();
 
-        HttpPost post = new HttpPost(url + "api/" + myPhoneNumber +"upload/picture/" + filename);
+        HttpPost post = new HttpPost(url + "api/" + myPhoneNumber +"/upload/picture/" + filename);
 
         MultipartEntity reqEntity = new MultipartEntity();
         reqEntity.addPart("attachment", new FileBody(file));
@@ -172,5 +165,8 @@ public class ServerRequest {
             e.printStackTrace();
         }
     }
+
+
+
 
 }

@@ -95,21 +95,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        final int permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS);
-        if (permissionCheck== PackageManager.PERMISSION_GRANTED){
-            //makeText(this, "연락처 열람 권한 있음.", Toast.LENGTH_LONG).show();
-        } else {
-            makeText(this, "연락처 열람 권한 없음.", Toast.LENGTH_LONG).show();
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this, Manifest.permission.READ_CONTACTS)){
-                makeText(this, "연락처 권한 설명 필요함.", Toast.LENGTH_LONG).show();
-            }else{
-                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_CONTACTS},1);
-            }
-        }
-
-
-
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 

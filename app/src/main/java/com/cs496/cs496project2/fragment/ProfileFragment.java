@@ -28,6 +28,8 @@ public class ProfileFragment extends Fragment {
     private Image header;
     public ProfileAdapter adapter;
     private RecyclerView recyclerView;
+
+    Bundle args;
     String phoneNumber;
 
     public static ProfileFragment newInstance() {
@@ -36,26 +38,28 @@ public class ProfileFragment extends Fragment {
 
     public ProfileFragment() {
         // Required empty public constructor
-        //TODO 내 프로필: Argument없으면 내 정보로 세팅한다
     }
-
-//    public ProfileFragment(Bundle bundle) {
-//        //TODO 적절히 넘겨받은 친구의 프로필 -> 내가 아니라 친구의 프로필이면 fab 나오게 해서 ***을 한다
-//
-//    }
 
     @Override
     public void onCreate(Bundle savedInstances) {
         super.onCreate(savedInstances);
+        SharedPreferences pref = getActivity().getSharedPreferences("registration",0);
+        phoneNumber = pref.getString("phone_number", "");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
         recyclerView = (RecyclerView) view.findViewById(R.id.profile_recycler_view);
+        args = getArguments();
 
-        Bundle args = getArguments();
+        update();
+
+        //fetchImages();
+        return view;
+    }
+
+    public void update() {
 
         if (args != null) {
             //전달받은 친구 프로필 <- 친구의 정보는 friendfragment에서 받아오므로 여기서는 데이터를 사용만 한다
@@ -66,9 +70,10 @@ public class ProfileFragment extends Fragment {
             header.setTitle(friend.getName());
             header.setDescription(friend.getEmail());
             //이미지 받아오기
-            images = friend.fetchImages();
+            images = friend.fetchImages(getActivity());
 
-        } else {
+        } else { //내 프로필
+
             phoneNumber = MainActivity.myPhoneNumber;
             header = new Image();
             images = new ArrayList<>();
@@ -88,7 +93,6 @@ public class ProfileFragment extends Fragment {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-
 
         //TODO: 이거 header에 간섭 받는지 확인
         recyclerView.addOnItemTouchListener(new ProfileAdapter.RecyclerTouchListener(getActivity().getApplicationContext(), recyclerView, new ProfileAdapter.ClickListener() {
@@ -110,12 +114,7 @@ public class ProfileFragment extends Fragment {
             }
         }));
 
-        //fetchImages();
-        return view;
-    }
-
-    public void update() {
-
+        adapter.notifyDataSetChanged();
     }
 
 }
