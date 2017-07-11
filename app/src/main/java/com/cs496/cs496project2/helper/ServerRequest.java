@@ -1,9 +1,5 @@
 package com.cs496.cs496project2.helper;
 
-/**
- * Created by memorial on 2017. 7. 10..
- */
-
 import android.util.Log;
 
 import com.cs496.cs496project2.MainActivity;
@@ -15,22 +11,19 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ServerRequest {
     private final String url = "http://52.79.188.97/";
     private final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    private final String phoneNumber = MainActivity.myPhoneNumber;
+    private final MediaType JPG = MediaType.parse("image/jpeg");
+    private final String myPhoneNumber = MainActivity.myPhoneNumber;
 
     public String getUrl() {
         return this.url;
@@ -48,7 +41,7 @@ public class ServerRequest {
         JSONObject account = new JSONObject();
         try {
             account.put("name", name);
-            account.put("phoneNumber", phoneNumber);
+            account.put("myPhoneNumber", phoneNumber);
             account.put("email", email);
             account.put("profilePictureURL", profilePictureURL);
         } catch(Exception e) {
@@ -59,7 +52,6 @@ public class ServerRequest {
         Request req = new Request.Builder().url(this.url + "api/account/add").put(reqBody).build();
 
         try {
-            //TODO 여기 에러
             Response res = client.newCall(req).execute();
             return res.body().string();
         } catch(Exception e) {
@@ -81,7 +73,7 @@ public class ServerRequest {
                 JSONObject body = new JSONObject();
                 Friend iter = friends.get(i);
                 body.put("name", iter.getName());
-                body.put("phoneNumber", iter.getPhoneNumber());
+                body.put("myPhoneNumber", iter.getPhoneNumber());
 
                 arrFriends.put(body);
             }
@@ -93,7 +85,7 @@ public class ServerRequest {
         }
 
         RequestBody reqBody = RequestBody.create(JSON, contacts.toString());
-        Request req = new Request.Builder().url(this.url + "api/" + this.phoneNumber + "/set/friends").put(reqBody).build();
+        Request req = new Request.Builder().url(this.url + "api/" + this.myPhoneNumber + "/set/friends").put(reqBody).build();
 
         try {
             Response res = client.newCall(req).execute();
@@ -108,7 +100,7 @@ public class ServerRequest {
     public List<Friend> getContacts() {
         OkHttpClient client = new OkHttpClient();
 
-        Request req = new Request.Builder().url(this.url + "api/" + this.phoneNumber + "/get/friends").build();
+        Request req = new Request.Builder().url(this.url + "api/" + this.myPhoneNumber + "/get/friends").build();
         try {
             Response response = client.newCall(req).execute();
             JSONArray contacts = new JSONArray(response.body().string());
@@ -118,7 +110,7 @@ public class ServerRequest {
 
             for(i=0; i<contacts.length(); i++) {
                 JSONObject iter = contacts.getJSONObject(i);
-                Friend item = new Friend(iter.getString("phoneNumber"));
+                Friend item = new Friend(iter.getString("myPhoneNumber"));
                 item.setName(iter.getString("name"));
 
                 Log.i("name", iter.getString("name"));
@@ -134,7 +126,7 @@ public class ServerRequest {
         return null;
     }
 
-    public List<String> getGallery() {
+    public List<String> getGallery(String phoneNumber) {
         OkHttpClient client = new OkHttpClient();
 
         Request req = new Request.Builder().url(this.url + "api/" + phoneNumber + "/get/gallery").build();
@@ -154,6 +146,20 @@ public class ServerRequest {
         }
 
         return null;
+    }
+
+    public String uploadFile(String filename, File file) {
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody reqBody = RequestBody.create(JPG, file);
+        Request req = new Request.Builder().url(this.url + "api/" + this.myPhoneNumber + "/upload/picture/" + filename).put(reqBody).build();
+        try {
+            Response response = client.newCall(req).execute();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return filename;
     }
 
 }

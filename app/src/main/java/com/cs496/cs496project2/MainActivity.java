@@ -317,21 +317,40 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //TODO: 서버로 이미지 올리기
         if(requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
-            Uri imageUri = Uri.parse(mCurrentPhotoPath);
-            String fileNameInDB = (new File(imageUri.toString())).getName();
-
+            final Uri imageUri = Uri.parse(mCurrentPhotoPath);
+            final String fileNameInDB = (new File(imageUri.toString())).getName();
             Log.d("     captured image", fileNameInDB);
+            (new AsyncTask<Void,Void,Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    (new ServerRequest()).uploadFile(fileNameInDB, new File(imageUri.getPath()));
+                    return null;
+                }
+            }).execute();
+
         }
         else if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
-            Uri uri = data.getData();
-
+            final Uri uri = data.getData();
 
             String timeStamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
-            String fileNameInDB = myPhoneNumber + "_" + timeStamp + ".jpg";
+            final String fileNameInDB = myPhoneNumber + "_" + timeStamp + ".jpg";
             Log.d("        chosen image", fileNameInDB);
             //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+            (new AsyncTask<Void,Void,Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    (new ServerRequest()).uploadFile(fileNameInDB, new File(uri.getPath()));
+                    return null;
+                }
+            }).execute();
 
         }
+
+        update();
+    }
+
+    public void update() {
+
     }
 }
 
