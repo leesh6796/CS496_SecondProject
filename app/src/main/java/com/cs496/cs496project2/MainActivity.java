@@ -298,7 +298,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void importFromLocalStorage() { //갤러리에서 선택 후 onActivityResult로
-        Intent pickImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent pickImageIntent = new Intent(Intent.ACTION_PICK);
         pickImageIntent.setType("image/*");
         startActivityForResult(Intent.createChooser(pickImageIntent, "Select picture to upload"), PICK_IMAGE_REQUEST);
     }
@@ -354,6 +354,7 @@ public class MainActivity extends AppCompatActivity
 
         else if(requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             final Uri imageUri = Uri.parse(mCurrentPhotoPath);
+
             final String fileNameInDB = (new File(imageUri.toString())).getName();
             Log.e("     captured image", imageUri.toString());
             (new AsyncTask<Void,Void,Void>() {
@@ -370,17 +371,23 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        //TODO: 에러
         else if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
-            final Uri uri = data.getData();
+
             String timeStamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
             final String fileNameInDB = myPhoneNumber + "_" + timeStamp + ".jpg";
+
+            Uri uri = data.getData();
+            String[] filePath = {MediaStore.Images.Media.DATA};
+            Cursor cursor = this.getContentResolver().query(uri, filePath, null, null, null);
+            cursor.moveToFirst();
+            final String imagePath = cursor.getString(cursor.getColumnIndex(filePath[0]));
+            cursor.close();
             Log.e("        chosen image", uri.getPath());
 
             (new AsyncTask<Void,Void,Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
-                    (new ServerRequest(thisActivity)).uploadFile(fileNameInDB, new File(uri.getPath()));
+                    (new ServerRequest(thisActivity)).uploadFile(fileNameInDB, new File(imagePath));
                     return null;
                 }
                 @Override
@@ -399,32 +406,6 @@ public class MainActivity extends AppCompatActivity
         ff.update();
         pf.update();
     }
-
-    /**
-     * helper to retrieve the path of an image URI
-     */
-    public String getPath(Uri uri) {
-        // just some safety built in
-        if( uri == null ) {
-            // TODO perform some logging or show user feedback
-            return null;
-        }
-        // try to retrieve the image from the media store first
-        // this will only work for images selected from gallery
-        String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        if( cursor != null ){
-            int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            String path = cursor.getString(column_index);
-            cursor.close();
-            return path;
-        }
-        // this is our fallback here
-        return uri.getPath();
-    }
-
 
 }
 
