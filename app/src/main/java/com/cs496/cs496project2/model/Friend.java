@@ -74,19 +74,5 @@ public class Friend implements Serializable {
     }
 
 
-    public boolean isRegistered(final Context context) {
-        boolean flag = false;
-        (new AsyncTask<Void,Void,Void>() {
-            @Override
-            protected boolean doInBackground(Void... voids) {
-                flag =  (new ServerRequest(context)).getProfileImageUrl(phoneNumber) != null);
-            }
-            @Override
-            protected void onPostExecute(boolean temp) {
-                flag = temp;
-            }
-        }).execute();
-
-    }
 
 }

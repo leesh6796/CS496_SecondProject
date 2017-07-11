@@ -84,7 +84,7 @@ public class FriendsFragment extends Fragment {
                 friends = (ArrayList<Friend>) temp;
                 adapter = new FriendAdapter(getActivity(), friends);
                 adapter.notifyDataSetChanged();
-                listView.setAdapter(adapter);
+                //listView.setAdapter(adapter);
 
             }
         }).execute();
@@ -92,14 +92,45 @@ public class FriendsFragment extends Fragment {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             public void onItemClick(AdapterView<?> adapterVIew, View view, int position, long id){
-                Friend friend = (Friend) adapter.getItem(position);
-                if(friend.isRegistered(getActivity())) {
-                    Intent visitIntent = new Intent(getActivity(), VisitActivity.class);
-                    visitIntent.putExtra("friend", friend);
-                    startActivity(visitIntent);
-                } else {
-                    Toast.makeText(getActivity(), friend.getName() + " has not registered", Toast.LENGTH_LONG).show();
-                }
+                /*final Friend friend =                (Friend) adapter.getItem(position);
+                (new AsyncTask<Void,Void,Boolean>() {
+                        @Override
+                        protected Boolean doInBackground(Void... voids) {
+                            return (new ServerRequest(getActivity())).isRegister(friend.getPhoneNumber());
+                        }
+                    @Override
+                    protected void onPostExecute(Boolean temp) {
+                        if(temp) {
+                            Intent visitIntent = new Intent(getActivity(), VisitActivity.class);
+                            visitIntent.putExtra("friend", friend);
+                            startActivity(visitIntent);
+                        } else {
+                            Toast.makeText(getActivity(), friend.getName() + " has not registered", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }).execute();*/
+                int pos = position;
+                final Friend friend = (Friend)adapter.getItem(pos);
+                new AsyncTask<Void, Void, Boolean>() {
+                    @Override
+                    protected Boolean doInBackground(Void... args) {
+                        return (new ServerRequest(getActivity())).isRegister(friend.getPhoneNumber());
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean temp) {
+                        if(temp) {
+                            Intent visitIntent = new Intent(getActivity(), VisitActivity.class);
+                            visitIntent.putExtra("name", friend.getName());
+                            visitIntent.putExtra("profilePictureURL", friend.getProfileImageUrl());
+                            visitIntent.putExtra("phoneNumber", friend.getPhoneNumber());
+                            startActivity(visitIntent);
+                        } else {
+                            Toast.makeText(getActivity(), friend.getName() + " has not registered", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }.execute();
+
                 /*Bundle bundle = new Bundle();
                 bundle.putSerializable("friend", friend);
                 FragmentTransaction ft = getFragmentManager().beginTransaction();

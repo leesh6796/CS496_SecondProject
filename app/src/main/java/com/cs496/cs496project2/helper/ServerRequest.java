@@ -118,8 +118,6 @@ public class ServerRequest {
                 Friend item = new Friend(iter.getString("phoneNumber"));
                 item.setName(iter.getString("name"));
 
-                Log.i("name", iter.getString("name"));
-
                 friends.add(item);
             }
 
@@ -257,8 +255,8 @@ public class ServerRequest {
             Response response = client.newCall(req).execute();
             String body = response.body().string();
 
-            if(body == "true") return true;
-            else if(body == "false") return false;
+            if(body.equals("true")) return true;
+            else if(body.equals("false")) return false;
         } catch(Exception e) {
             e.printStackTrace();
         }

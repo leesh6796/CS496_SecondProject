@@ -36,9 +36,17 @@ public class GalleryFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_gallery, container, false);
 
+
+
+        return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         adapter = new GridViewAdapter();
 
-        grid = (GridView)rootView.findViewById(R.id.galleryGridView);
+        grid = (GridView) getView().findViewById(R.id.galleryGridView);
         grid.setAdapter(adapter);
 
         // GridView Item Click EventListener
@@ -54,8 +62,6 @@ public class GalleryFragment extends Fragment {
         });
 
         update();
-
-        return rootView;
     }
 
     // Glide로 사진을 GridView에 추가한다.
