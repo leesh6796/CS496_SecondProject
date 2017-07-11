@@ -2,6 +2,7 @@ package com.cs496.cs496project2;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
@@ -94,6 +95,7 @@ public class MainActivity extends AppCompatActivity
     private TabLayout tabLayout;
     private String[] pageTitle = {"Friends", "Me", "Match"};
     private MainViewPagerAdapter pagerAdapter;
+    private Activity thisActivity = this;
 
     private CallbackManager callbackManager;
     private AccessToken accessToken;
@@ -273,11 +275,14 @@ public class MainActivity extends AppCompatActivity
         (new AsyncTask<Void,Void,Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                new ServerRequest().setContacts(friends);
+                new ServerRequest(thisActivity).setContacts(friends);
                 return null;
             }
+            @Override
+            protected void onPostExecute(Void v) {
+                update();
+            }
         }).execute();
-        update();
     }
 
 
@@ -335,12 +340,16 @@ public class MainActivity extends AppCompatActivity
         if(requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             final Uri imageUri = Uri.parse(mCurrentPhotoPath);
             final String fileNameInDB = (new File(imageUri.toString())).getName();
-            Log.d("     captured image", fileNameInDB);
+            Log.e("     captured image", imageUri.toString());
             (new AsyncTask<Void,Void,Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
-                    (new ServerRequest()).uploadFile(fileNameInDB, new File(imageUri.getPath()));
+                    (new ServerRequest(thisActivity)).uploadFile(fileNameInDB, new File(imageUri.getPath()));
                     return null;
+                }
+                @Override
+                protected void onPostExecute(Void v) {
+                    update();
                 }
             }).execute();
 
@@ -350,19 +359,22 @@ public class MainActivity extends AppCompatActivity
 
             String timeStamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
             final String fileNameInDB = myPhoneNumber + "_" + timeStamp + ".jpg";
-            Log.d("        chosen image", fileNameInDB);
+            Log.e("        chosen image", uri.toString());
             //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
             (new AsyncTask<Void,Void,Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
-                    (new ServerRequest()).uploadFile(fileNameInDB, new File(uri.getPath()));
+                    (new ServerRequest(thisActivity)).uploadFile(fileNameInDB, new File(uri.getPath()));
                     return null;
+                }
+                @Override
+                protected void onPostExecute(Void v) {
+                    update();
                 }
             }).execute();
 
         }
 
-        update();
     }
 
     public void update() {
