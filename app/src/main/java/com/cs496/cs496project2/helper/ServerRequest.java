@@ -186,22 +186,65 @@ public class ServerRequest {
         return null;
     }
 
-    public Friend getAccout(String phoneNumber) {
+    public List<GuestBookItem> getGuestBook(String phoneNumber) {
         OkHttpClient client = new OkHttpClient();
-        Request req = new Request.Builder().url(url + "api/" + phoneNumber + "/get/account").build();
+
+        String apiURL = url + "api/" + phoneNumber + "/get/guestbook";
+        Request req = new Request.Builder().url(apiURL).build();
 
         try {
             Response response = client.newCall(req).execute();
-            JSONObject account = new JSONObject(response.body().string());
-            return new Friend(phoneNumber, account.getString("name"), account.getString("profilePictureURL"));
-        } catch(JSONException e) {
-            //e.printStackTrace();
-            Log.e(phoneNumber, "is not registered");
-        } catch(IOException e) {
+
+            JSONArray items = new JSONArray(response.body().string());
+            List<GuestBookItem> returnValue = new ArrayList<>();
+
+            int i;
+            for(i=0; i<items.length(); i++) {
+                JSONObject item = items.getJSONObject(i);
+                GuestBookItem ele = new GuestBookItem();
+
+                ele.setName(item.getString("name"));
+                ele.setContent(item.getString("content"));
+                ele.setProfilePictureURL(item.getString("profilePictureURL"));
+                ele.setSecret(item.getBoolean("secret"));
+
+                returnValue.add(ele);
+            }
+
+            return returnValue;
+        } catch(Exception e) {
             e.printStackTrace();
         }
 
         return null;
+    }
+
+    public String addGuestBook(String phoneNumber, GuestBookItem item) {
+        OkHttpClient client = new OkHttpClient();
+        String api = this.url + "api/" + phoneNumber + "/add/guestbook";
+
+        JSONObject json = new JSONObject();
+        try {
+            json.put("visitor", item.getName());
+            json.put("content", item.getContent());
+            json.put("profilePictureURL", item.getProfilePictureURL());
+            json.put("secret", item.isSecret());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        RequestBody reqBody = RequestBody.create(JSON, json.toString());
+        Request req = new Request.Builder().url(api).post(reqBody).build();
+
+        try {
+            Response res = client.newCall(req).execute();
+            String body = res.body().string();
+            return body;
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return "";
     }
 
 

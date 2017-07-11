@@ -23,7 +23,6 @@ router.route('/api/dev/account/get/all').get(account.getAllAccount);
 router.route('/api/:phoneNumber/get/account').get(account.getAccountInfo);
 
 router.route('/api/:phoneNumber/get/guestbook').get(account.getGuestBook);
-router.route('/api/:phoneNumber/get/guestbook/my').get(account.getMyGuestBook);
 router.route('/api/:phoneNumber/add/guestbook').post(account.addGuestBook);
 router.route('/api/dev/:phoneNumber/clear/guestbook').get(account.clearGuestBook);
 
