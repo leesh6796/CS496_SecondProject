@@ -35,7 +35,7 @@ module.exports = {
                 email = body.email;
                 profilePictureURL = body.profilePictureURL;
 
-                Account.findOne({'phoneNumber':phoneNumber}, (err, account) => {
+                Account.find({'phoneNumber':phoneNumber}, (err, account) => {
                         if(err) return res.status(500).json({'error':err});
 
                         // phoneNumber 중복 안되면 새 account를 추가한다.

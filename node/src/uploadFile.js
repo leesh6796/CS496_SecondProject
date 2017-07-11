@@ -59,5 +59,10 @@ module.exports = {
                 res.end(img, 'binary'); // binary로 보낸다.
 
                 console.log("[" + new Date().toLocaleString() + "] Get Image " + filename);
+        },
+
+        devUpload : (req, res) => {
+                console.log(req.params.filename + " upload");
+                res.send("success");
         }
 };

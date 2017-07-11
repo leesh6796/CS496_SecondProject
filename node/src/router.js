@@ -34,6 +34,7 @@ router.route('/api/:phoneNumber/upload/picture/:filename').post(multerInstance.s
 router.route('/api/:phoneNumber/get/gallery').get(account.getGallery);
 //router.route('/api/:phoneNumber/picture/get').post(multerInstance.single('attachment'), upload.uploadFile);
 
+router.route('/api/dev/picture/upload/:filename').post(multerInstance.single('attachment'), upload.devUpload);
 router.route('/api/picture/get/:filename').get(upload.getImage);
 
 
