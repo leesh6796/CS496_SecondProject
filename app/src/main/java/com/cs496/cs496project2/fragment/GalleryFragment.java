@@ -70,6 +70,7 @@ public class GalleryFragment extends Fragment {
                     String phoneNumber = MainActivity.myPhoneNumber;
                     Log.i("phoneNumber", phoneNumber);
                     return (new ServerRequest(getActivity())).getGallery(phoneNumber);
+
                 }
 
                 @Override

@@ -14,7 +14,17 @@ var accountSchema = new Schema({
         gallery : [{
                 name : String,
                 path : String,
-                filename : String
+                filename : String,
+                comments : [{
+                        name : String,
+                        content : String
+                }]
+        }],
+        guestbook : [{
+                name : String,
+                profilePictureURL : String,
+                content : String,
+                secret : Boolean
         }]
 });
 
