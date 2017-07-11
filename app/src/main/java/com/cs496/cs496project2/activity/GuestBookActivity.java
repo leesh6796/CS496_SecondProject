@@ -89,13 +89,12 @@ public class GuestBookActivity extends AppCompatActivity {
 
                 for(i=results.size()-1; i>=0; i--) {
                     GuestBookItem item = results.get(i);
-                    Log.i("index", String.valueOf(i));
                     if(!myGuestBook) {
                         if(item.isSecret()) continue;
                     }
-                    Log.i("item", item.getContent());
                     adapter.addItem(item);
                 }
+
                 adapter.notifyDataSetChanged();
             }
         }.execute();
