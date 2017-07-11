@@ -67,7 +67,7 @@ public class Friend implements Serializable {
     }
 
     public ArrayList<Image> fetchImages(final Context context) {
-        images.clear();
+        images = new ArrayList<Image>();
         (new AsyncTask<Void,Void,Void>() {
             @Override
             protected Void doInBackground(Void... voids) {

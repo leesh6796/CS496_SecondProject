@@ -28,10 +28,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.cs496.cs496project2.activity.LoginActivity;
 import com.cs496.cs496project2.adapter.MainViewPagerAdapter;
 import com.cs496.cs496project2.fragment.FriendsFragment;
+import com.cs496.cs496project2.fragment.GalleryFragment;
 import com.cs496.cs496project2.fragment.ProfileFragment;
 import com.cs496.cs496project2.helper.ServerRequest;
 import com.cs496.cs496project2.model.Friend;
@@ -55,6 +58,9 @@ public class MainActivity extends AppCompatActivity
     private String[] pageTitle = {"Friends", "Me", "Match"};
     private MainViewPagerAdapter pagerAdapter;
     private Activity thisActivity = this;
+
+    private ImageView navigationProfileImage;
+    private TextView navigationName, navigationPhoneNumber;
 
     private CallbackManager callbackManager;
     private AccessToken accessToken;
@@ -88,9 +94,9 @@ public class MainActivity extends AppCompatActivity
 
         initViews();
 
-        //myPhoneNumber = getMyPhoneNumber();
+        myPhoneNumber = getMyPhoneNumber();
 
-        myPhoneNumber = "01082169122";
+        //myPhoneNumber = "01082169122";
 
         // Image list를 받아서 SharedReference에 저장
         /*new AsyncTask<Void, Void, Void>() {
@@ -177,6 +183,11 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        navigationProfileImage = (ImageView) findViewById(R.id.nav_header_image);
+        navigationName = (TextView) findViewById(R.id.nav_header_name);
+        navigationPhoneNumber = (TextView) findViewById(R.id.nav_header_phone_number);
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //viewpager and tab layout setup//////////////////////////////////////////////////////////////////
@@ -205,6 +216,9 @@ public class MainActivity extends AppCompatActivity
             }
         });
         /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
     }
 
 
@@ -234,7 +248,7 @@ public class MainActivity extends AppCompatActivity
             Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
                     ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[] { id }, null);
             while (phoneCursor.moveToNext()) {
-                String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)).replaceAll("[\\s\\-()]", "");;
                 friends.add(new Friend(phoneNumber, name));
             }
         }
@@ -362,7 +376,7 @@ public class MainActivity extends AppCompatActivity
 
     public void update() {
         FriendsFragment ff = (FriendsFragment) pagerAdapter.getRegisteredFragment(0);
-        ProfileFragment pf = (ProfileFragment) pagerAdapter.getRegisteredFragment(1);
+        GalleryFragment pf = (GalleryFragment) pagerAdapter.getRegisteredFragment(1);
         ff.update();
         pf.update();
     }
