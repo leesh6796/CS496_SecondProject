@@ -56,6 +56,7 @@ public class ProfileFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.profile_recycler_view);
 
         Bundle args = getArguments();
+
         if (args != null) {
             //전달받은 친구 프로필 <- 친구의 정보는 friendfragment에서 받아오므로 여기서는 데이터를 사용만 한다
             Friend friend = (Friend) args.getSerializable("friend");

@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -36,6 +37,7 @@ import java.util.Arrays;
 import com.cs496.cs496project2.MainActivity;
 import com.cs496.cs496project2.R;
 import com.cs496.cs496project2.helper.ImageHelper;
+import com.cs496.cs496project2.helper.ServerRequest;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -81,6 +83,9 @@ public class LoginActivity extends AppCompatActivity {
     private AccessToken accessToken;
     Profile profile;
     ProfileTracker profileTracker;
+
+    String phoneNumber;
+    String name;
 
     private Activity thisActivity = this;
 
@@ -275,7 +280,7 @@ public class LoginActivity extends AppCompatActivity {
         phoneNumberView.setError(null);
 
         // Store values at the time of the login attempt.
-        String phoneNumber = phoneNumberView.getText().toString();
+        phoneNumber = phoneNumberView.getText().toString();
 
 
         boolean cancel = false;
@@ -332,7 +337,20 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
-            finish();
+            (new AsyncTask<Void,Void,Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    (new ServerRequest(thisActivity)).addAccount(name, phoneNumber, "", MainActivity.myProfileImageURL);
+
+                    return null;
+                }
+                @Override
+                protected void onPostExecute(Void v) {
+                    Toast.makeText(thisActivity, "Registered", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            }).execute();
+
         }
 
         @Override
@@ -344,13 +362,15 @@ public class LoginActivity extends AppCompatActivity {
         private void register() {
             SharedPreferences pref = getSharedPreferences("registration", 0);
             SharedPreferences.Editor edit = pref.edit();
-            edit.putBoolean("isRegistered", true);
-            edit.putString("phone_number", phoneNumber);
             profile = Profile.getCurrentProfile();
             Uri uri = profile.getProfilePictureUri(800,800);
+            name = profile.getName();
+            edit.putBoolean("isRegistered", true);
+            edit.putString("phone_number", phoneNumber);
+            edit.putString("name", name);
             try {
                 MainActivity.myProfileImageURL = new URL(uri.toString()).toString();
-                Log.e("            My Profile Image Url", MainActivity.myProfileImageURL);
+                Log.e("   My Profile Image Url", MainActivity.myProfileImageURL);
                 edit.putString("profile_image_url", MainActivity.myProfileImageURL);
             } catch (MalformedURLException e) {
                 Toast.makeText(getApplicationContext(), "Malformed URL", Toast.LENGTH_SHORT).show();

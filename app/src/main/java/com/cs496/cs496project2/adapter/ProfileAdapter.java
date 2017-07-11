@@ -56,12 +56,14 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
         this.context = context;
         this.phoneNumber = phoneNumber;
         urls.clear();
-        (new AsyncTask<Void,Void,Void>() {
+        (new AsyncTask<Void,Void,List<String>>() {
             @Override
-            protected Void doInBackground(Void... voids) {
-                List<String> temp = (new ServerRequest()).getGallery(phoneNumber);
+            protected List<String> doInBackground(Void... voids) {
+                return (new ServerRequest()).getGallery(phoneNumber);
+            }
+            @Override
+            protected void onPostExecute(List<String> temp) {
                 for(String url : temp) urls.add(url);
-                return null;
             }
         }).execute();
     }

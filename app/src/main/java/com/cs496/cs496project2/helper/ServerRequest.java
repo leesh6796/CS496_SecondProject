@@ -1,5 +1,7 @@
 package com.cs496.cs496project2.helper;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.cs496.cs496project2.MainActivity;
@@ -11,6 +13,12 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -22,15 +30,16 @@ import java.util.List;
 public class ServerRequest {
     private final String url = "http://52.79.188.97/";
     private final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    private final MediaType JPG = MediaType.parse("image/jpeg");
-    private final String myPhoneNumber = MainActivity.myPhoneNumber;
+    private final String myPhoneNumber;
 
     public String getUrl() {
         return this.url;
     }
 
-    public ServerRequest() {
-
+    public  ServerRequest() {myPhoneNumber = MainActivity.myPhoneNumber;}
+    public ServerRequest(Context context) {
+        SharedPreferences pref = context.getSharedPreferences("registration", 0);
+        myPhoneNumber = pref.getString("phone_number", "");
     }
 
     // 서버에 새로운 계정을 추가한다. 프로그램에서는 최초 등록 시 한 번만 실행할 듯.
@@ -41,7 +50,7 @@ public class ServerRequest {
         JSONObject account = new JSONObject();
         try {
             account.put("name", name);
-            account.put("myPhoneNumber", phoneNumber);
+            account.put("phoneNumber", phoneNumber);
             account.put("email", email);
             account.put("profilePictureURL", profilePictureURL);
         } catch(Exception e) {
@@ -148,18 +157,20 @@ public class ServerRequest {
         return null;
     }
 
-    public String uploadFile(String filename, File file) {
-        OkHttpClient client = new OkHttpClient();
+    public void uploadFile(String filename, File file) {
+        HttpClient client = new DefaultHttpClient();
 
-        RequestBody reqBody = RequestBody.create(JPG, file);
-        Request req = new Request.Builder().url(this.url + "api/" + this.myPhoneNumber + "/upload/picture/" + filename).put(reqBody).build();
+        HttpPost post = new HttpPost(url + "api/" + myPhoneNumber +"upload/picture/" + filename);
+
+        MultipartEntity reqEntity = new MultipartEntity();
+        reqEntity.addPart("attachment", new FileBody(file));
+        post.setEntity(reqEntity);
+
         try {
-            Response response = client.newCall(req).execute();
-
-        } catch (IOException e) {
+            HttpResponse response = client.execute(post);
+        } catch(Exception e) {
             e.printStackTrace();
         }
-        return filename;
     }
 
 }
