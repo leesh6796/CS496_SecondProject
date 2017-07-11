@@ -74,10 +74,11 @@ public class MainActivity extends AppCompatActivity
     public static String myName = "";
     public static String myProfileImageURL = "";
 
-    final int READ_CONTACT_CODE = 0;
-    static final int LOG_IN_REQUEST =1;
-    static final int PICK_IMAGE_REQUEST = 2;
-    static final int CAMERA_REQUEST = 3;
+    final int READ_CONTACT_CODE = 987;
+    final int WRITE_EXTERNAL_STORAGE_CODE = 745;
+    static final int LOG_IN_REQUEST =1231;
+    static final int PICK_IMAGE_REQUEST = 2324;
+    static final int CAMERA_REQUEST = 35435;
     String mCurrentPhotoPath;
 
     private ArrayList<Friend> rv = new ArrayList<>();
@@ -143,8 +144,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    //TODO: option에 로그아웃 만들기
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -152,11 +151,11 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_sync_friends) {
-            trySyncFriends(); //TODO -> 자동으로 다시 로그인 하기?, Intent 전달?
+            trySyncFriends();
         } else if (id == R.id.nav_camera) {
             camera();
         } else if (id == R.id.nav_import_local) {
-            importFromLocalStorage();
+            tryImport();
         } else if (id == R.id.nav_logoff) {
             logoff();
         }
@@ -214,9 +213,6 @@ public class MainActivity extends AppCompatActivity
         pagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
 
-
-
-
     }
 
 
@@ -265,14 +261,14 @@ public class MainActivity extends AppCompatActivity
         }).execute();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch(requestCode) {
-            case READ_CONTACT_CODE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                }
+
+    private void tryImport() {
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            importFromLocalStorage();
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
         }
     }
 
@@ -383,6 +379,22 @@ public class MainActivity extends AppCompatActivity
 
         }
 
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode) {
+            case READ_CONTACT_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    syncFriends();
+                }
+            case WRITE_EXTERNAL_STORAGE_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    importFromLocalStorage();
+                }
+        }
     }
 
     public void update() {

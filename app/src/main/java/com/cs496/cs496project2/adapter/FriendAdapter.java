@@ -56,8 +56,12 @@ public class FriendAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+//
+//        if (convertView != null) {
+//            return (FriendItemView) convertView;
+//        }
 
-        final FriendItemView view = (FriendItemView) ((convertView != null) ? convertView : new FriendItemView(context));
+        final FriendItemView view =  new FriendItemView(context);
         final Friend item = items.get(position);
         view.setName(item.getName());
         view.setPhoneNumber(item.getPhoneNumber());
@@ -69,7 +73,8 @@ public class FriendAdapter extends BaseAdapter implements Filterable {
             }
             @Override
             protected void onPostExecute(String temp) {
-                view.setImage(temp);
+                if(temp != null)
+                    view.setImage(temp);
             }
         }).execute();
 
@@ -96,7 +101,7 @@ public class FriendAdapter extends BaseAdapter implements Filterable {
 
                 for(int i =0; i<filterList.size();i++) {
                     if(filterList.get(i).getName().toUpperCase().contains(constraint) || filterList.get(i).getPhoneNumber().contains(constraint) || SoundSearcher.matchString(filterList.get(i).getName(),constraint.toString())){
-                        Friend p = new Friend(filterList.get(i).getPhoneNumber());
+                        Friend p = new Friend(filterList.get(i).getPhoneNumber(), filterList.get(i).getName());
                         filters.add(p);
                     }
                 }

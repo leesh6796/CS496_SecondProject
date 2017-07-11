@@ -148,27 +148,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                LoginManager.getInstance().logInWithReadPermissions(thisActivity, Arrays.asList("public_profile"));
-                if (!postingEnabled) {
-
-                    postingEnabled = true;
-                    phoneNumberView.setVisibility(View.VISIBLE);
-                    registerButton.setVisibility(View.VISIBLE);
-                } else {
-                    postingEnabled = false;
-                    phoneNumberView.setVisibility(View.GONE);
-                    registerButton.setVisibility(View.GONE);
-
-
-                }
-
-            }
-        });
-        /////////////////////////////////////////////////////////////////////////////////////////////////
 
     }
     @Override
@@ -354,8 +333,6 @@ public class LoginActivity extends AppCompatActivity {
             edit.putString("name", name);
             try {
                 MainActivity.myProfileImageURL = new URL(uri.toString()).toString();
-                Log.e("My Profile Image Url", MainActivity.myProfileImageURL);
-                Log.e("   My Profile Image Url", MainActivity.myProfileImageURL);
                 edit.putString("profile_image_url", MainActivity.myProfileImageURL);
             } catch (MalformedURLException e) {
                 Toast.makeText(getApplicationContext(), "Malformed URL", Toast.LENGTH_SHORT).show();
