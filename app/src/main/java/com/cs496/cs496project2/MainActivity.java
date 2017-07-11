@@ -28,6 +28,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.cs496.cs496project2.activity.LoginActivity;
 import com.cs496.cs496project2.adapter.MainViewPagerAdapter;
@@ -56,6 +58,9 @@ public class MainActivity extends AppCompatActivity
     private String[] pageTitle = {"Friends", "Me", "Match"};
     private MainViewPagerAdapter pagerAdapter;
     private Activity thisActivity = this;
+
+    private ImageView navigationProfileImage;
+    private TextView navigationName, navigationPhoneNumber;
 
     private CallbackManager callbackManager;
     private AccessToken accessToken;
@@ -178,6 +183,11 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        navigationProfileImage = (ImageView) findViewById(R.id.nav_header_image);
+        navigationName = (TextView) findViewById(R.id.nav_header_name);
+        navigationPhoneNumber = (TextView) findViewById(R.id.nav_header_phone_number);
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //viewpager and tab layout setup//////////////////////////////////////////////////////////////////
@@ -206,6 +216,9 @@ public class MainActivity extends AppCompatActivity
             }
         });
         /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
     }
 
 

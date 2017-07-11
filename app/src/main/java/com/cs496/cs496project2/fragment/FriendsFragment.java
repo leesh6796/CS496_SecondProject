@@ -49,6 +49,19 @@ public class FriendsFragment extends Fragment {
 
         listView = (ListView) view.findViewById(R.id.friends);
         editTextFilter = (EditText)view.findViewById(R.id.editTextFilter);
+        editTextFilter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String filterText = editable.toString();
+                adapter.getFilter().filter(filterText);
+            }
+        });
         update();
         return view;
     }
@@ -82,9 +95,9 @@ public class FriendsFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("friend", friend);
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ProfileFragment profileFragment = ProfileFragment.newInstance();
-                profileFragment.setArguments(bundle);
-                ft.replace(R.id.friends_tap_content, profileFragment, "profile");
+                GalleryFragment galleryFragment = new GalleryFragment();
+                galleryFragment.setArguments(bundle);
+                ft.replace(R.id.friends_tap_content, galleryFragment, "gallery");
                 ft.addToBackStack(null);
                 ft.commit();
             }
@@ -94,19 +107,7 @@ public class FriendsFragment extends Fragment {
         listView.setTextFilterEnabled(true);
 
 
-        editTextFilter.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String filterText = editable.toString();
-                adapter.getFilter().filter(filterText);
-            }
-        });
 
 
     }

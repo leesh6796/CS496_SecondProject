@@ -116,7 +116,7 @@ public class FriendAdapter extends BaseAdapter implements Filterable {
 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults results) {
-            items=(ArrayList<Friend>) results.values;
+            items = (ArrayList<Friend>) results.values;
             notifyDataSetChanged();
 
         }

@@ -61,7 +61,7 @@ public class FriendItemView extends FrameLayout {
     public void setImage(String imageUrl) {
         Glide.with(context)
                 .load(imageUrl)
-                .placeholder(R.drawable.placeholder)
+                .placeholder(R.drawable.person)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .crossFade()
                 .into(profileImageView);

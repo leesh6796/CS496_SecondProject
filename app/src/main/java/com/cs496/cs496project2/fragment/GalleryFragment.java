@@ -18,6 +18,7 @@ import com.cs496.cs496project2.activity.ImageViewerActivity;
 import com.cs496.cs496project2.adapter.GridViewAdapter;
 import com.cs496.cs496project2.helper.GridViewImgItem;
 import com.cs496.cs496project2.helper.ServerRequest;
+import com.cs496.cs496project2.model.Friend;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
 
 public class GalleryFragment extends Fragment {
     private GridViewAdapter adapter;
+    GridView grid;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,7 +38,7 @@ public class GalleryFragment extends Fragment {
 
         adapter = new GridViewAdapter();
 
-        GridView grid = (GridView)rootView.findViewById(R.id.galleryGridView);
+        grid = (GridView)rootView.findViewById(R.id.galleryGridView);
         grid.setAdapter(adapter);
 
         // GridView Item Click EventListener
@@ -61,34 +63,42 @@ public class GalleryFragment extends Fragment {
         adapter.clearItem();
 
         Bundle args = getArguments();
-
-        new AsyncTask<Void, Void, List<String>>() {
-            @Override
-            public List<String> doInBackground(Void... args) {
-                List<String> urls;
-
-                // 내 갤러리를 로드할 때
-                if(args instanceof Void[]) {
+        if(args == null) { //내 갤러리
+            new AsyncTask<Void, Void, List<String>>() {
+                @Override
+                public List<String> doInBackground(Void... args) {
                     String phoneNumber = MainActivity.myPhoneNumber;
                     Log.i("phoneNumber", phoneNumber);
-                    urls = (new ServerRequest(getActivity())).getGallery(phoneNumber);
-
-                }
-                // 다른 사람 갤러리 로드할 때
-                else {
-                    urls = new ArrayList<String>();
+                    return (new ServerRequest(getActivity())).getGallery(phoneNumber);
                 }
 
-                return urls;
-            }
-
-            @Override
-            public void onPostExecute(List<String> results) {
-                for(String ele : results) {
-                    Log.i("imgs", ele);
-                    adapter.addItem(ele);
+                @Override
+                public void onPostExecute(List<String> results) {
+                    for(String ele : results) {
+                        Log.i("imgs", ele);
+                        adapter.addItem(ele);
+                    }
+                    adapter.notifyDataSetChanged();
                 }
-            }
-        }.execute();
+            }.execute();
+        } else {
+            final Friend friend = (Friend) args.getSerializable("friend");
+
+            new AsyncTask<Void, Void, List<String>>() {
+                @Override
+                public List<String> doInBackground(Void... args) {
+                    // 다른 사람 갤러리 로드할 때
+                    return  (new ServerRequest(getActivity())).getGallery(friend.getPhoneNumber());
+                }
+                @Override
+                public void onPostExecute(List<String> results) {
+                    for (String ele : results) {
+                        Log.i("imgs", ele);
+                        adapter.addItem(ele);
+                    }
+                    adapter.notifyDataSetChanged();
+                }
+            }.execute();
+        }
     }
 }
