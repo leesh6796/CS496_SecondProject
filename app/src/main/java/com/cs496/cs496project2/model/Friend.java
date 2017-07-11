@@ -1,9 +1,14 @@
 package com.cs496.cs496project2.model;
 
 import android.net.Uri;
+import android.os.AsyncTask;
 
+import com.cs496.cs496project2.helper.ServerRequest;
+
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Friend implements Serializable {
 
@@ -57,6 +62,23 @@ public class Friend implements Serializable {
     public void setProfileImageUri(Uri profileImageUri) { this.profileImageUri = profileImageUri; }
 
     public ArrayList<Image> getImages() {
+        return images;
+    }
+
+    public ArrayList<Image> fetchImages() {
+        images.clear();
+        (new AsyncTask<Void,Void,Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                List<String> urls = (new ServerRequest()).getGallery(phoneNumber);
+                for (String url : urls) {
+                    Image image = new Image();
+                    image.setImageUrl(url);
+                    images.add(image);
+                }
+                return null;
+            }
+        }).execute();
         return images;
     }
 

@@ -56,9 +56,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 
+import com.cs496.cs496project2.activity.LoginActivity;
 import com.cs496.cs496project2.adapter.MainViewPagerAdapter;
+import com.cs496.cs496project2.fragment.FriendsFragment;
+import com.cs496.cs496project2.fragment.ProfileFragment;
 import com.cs496.cs496project2.helper.ServerRequest;
 import com.cs496.cs496project2.model.Friend;
 import com.facebook.AccessToken;
@@ -96,7 +100,6 @@ public class MainActivity extends AppCompatActivity
     ContentResolver resolver;
     Cursor cursor;
 
-    //TODO 이거 좀 깔끔하게 바꿔야..
     public static String myPhoneNumber = "";
     public static String myEmail = "";
     public static String myName = "";
@@ -108,87 +111,21 @@ public class MainActivity extends AppCompatActivity
 
     private ArrayList<Friend> rv = new ArrayList<>();
 
-    private void HTTPTest() {
-        final String url = "http://13.124.149.1/";
-        final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            public Void doInBackground(Void... args) {
-                Log.i("작업", "시작");
-                ServerRequest req = new ServerRequest();
-
-                rv = (ArrayList)req.getContacts();
-                Friend fr = new Friend("01099990000", "test4");
-                rv.add(fr);
-
-                req.setContacts(rv);
-
-                rv = (ArrayList)req.getContacts();
-
-                /*String dirPath = getFilesDir().getAbsolutePath();
-                File file = new File(dirPath);
-
-                // 일치하는 폴더가 없으면 생성
-                if(!file.exists()) {
-                    file.mkdirs();
-                    Log.i("폴더 생성", "Success");
-                }
-
-                // txt 파일 생성
-                String testStr = "ABCDE";
-                File saveFile = new File(dirPath + "/test.txt");
-                try {
-                    if(!saveFile.exists()) {
-                        FileOutputStream fos = new FileOutputStream(saveFile);
-                        fos.write(testStr.getBytes());
-                        fos.close();
-                        Log.i("파일 생성", "Success");
-                    }
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
-
-                HttpClient client = new DefaultHttpClient();
-                HttpPost post = new HttpPost("http://13.124.149.1/api/upload/picture/01082169122");
-
-                MultipartEntity reqEntity = new MultipartEntity();
-                reqEntity.addPart("attachment", new FileBody(new File(dirPath + "/test.txt")));
-                post.setEntity(reqEntity);
-
-                try {
-                    HttpResponse response = client.execute(post);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }*/
-
-                return null;
-            }
-
-            @Override
-            public void onPostExecute(final Void result) {
-                int i;
-                for(i=0; i<rv.size(); i++) {
-                    Log.i("Gallery", rv.get(i).getName());
-                    Log.i("Gallery", rv.get(i).getPhoneNumber());
-                }
-
-            }
-        }.execute();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        myPhoneNumber = "01082169122";
-        HTTPTest();
+        SharedPreferences pref = getSharedPreferences("registration", 0);
+        if(!pref.getBoolean("isRegistered",false))
+            initRegistration();
 
         initViews();
-        initFacebook();
 
-        //myPhoneNumber = getMyPhoneNumber();
+        myPhoneNumber = getMyPhoneNumber();
+
     }
 
 
@@ -209,20 +146,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    /*@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
+    //TODO: option에 로그아웃 만들기
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -230,10 +154,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_register) {
-            register();
-        } else if (id == R.id.nav_sync_friends) {
-            syncFriends();
+        if (id == R.id.nav_sync_friends) {
+            syncFriends(); //TODO -> 자동으로 다시 로그인 하기?, Intent 전달?
         } else if (id == R.id.nav_camera) {
             camera();
         } else if (id == R.id.nav_import_local) {
@@ -245,6 +167,11 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private void initRegistration() {
+
+        Intent registrationIntent = new Intent(this, LoginActivity.class);
+        startActivity(registrationIntent);
+    }
 
     private void initViews() {
         //toolbar setup///////////////////////////////////////////////////////////////////////////
@@ -290,172 +217,40 @@ public class MainActivity extends AppCompatActivity
         /////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
-    private void initFacebook() {
-        //facebook login & get access token///////////////////////////////////////////////////////////////////////
-        callbackManager = CallbackManager.Factory.create();
 
-        LoginButton loginButton = (LoginButton) findViewById(R.id.btn_fb_login);
-        loginButton.setReadPermissions(Arrays.asList("public_profile", "email", "user_photos"));
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(JSONObject object, GraphResponse response) {
-                        Log.v("result",object.toString());
-                    }
-                });
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,nameView,email,gender,birthday");
-                graphRequest.setParameters(parameters);
-                graphRequest.executeAsync();
-                Toast.makeText(getApplicationContext(), "Logged In", Toast.LENGTH_SHORT).show();
-            }
-            @Override
-            public void onCancel() { }
-            @Override
-            public void onError(FacebookException error) {
-                Log.e("LoginErr",error.toString());
-            }
-        });
-
-        accessToken = AccessToken.getCurrentAccessToken();
-        /////////////////////////////////////////////////////////////////////////////////////////////////
-    }
-
-    //전화번호 등록했는지 확인하고 안했으면 등록시킴, 전화번호 반환
     public String getMyPhoneNumber() {
-        SharedPreferences pref = getSharedPreferences("my_phone_number", 0);
-        String myPhoneNumber = pref.getString("my_phone_number", "");
-        if (myPhoneNumber.equals("")) {
-            register();
-        }
-        myPhoneNumber = pref.getString("my_phone_number", "");
-        return myPhoneNumber;
+        return getSharedPreferences("registration", 0).getString("phone_number", "");
     }
 
 
-    private void register() {
 
-        //get phonenumber.
-        SharedPreferences pref = getSharedPreferences("my_phone_number", 0);
-        String temp = pref.getString("my_phone_number", "");
-        final SharedPreferences.Editor edit = pref.edit();
-
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Register");
-        dialog.setMessage("Enter your phone number to register");
-        final EditText editText = new EditText(this);
-        editText.setText(temp);
-        dialog.setView(editText);
-        dialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String phoneNumber = editText.getText().toString();
-                Log.d("My Phone Number", phoneNumber);
-                edit.putString("my_phone_number", phoneNumber);
-                edit.commit();
-            }
-        });
-        dialog.show();
-
-
-
-        //TODO: 작업 순서상 앱 설치후 처음시작시 문제일으킬 가능성 있음
-        new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/me?fields=picture.type(large),email,name",
-                null,
-                HttpMethod.GET,
-                new GraphRequest.Callback() {
-                    public void onCompleted(GraphResponse response) {
-                        //TODO: 페북에서 프로필 이미지 주소/email 가져와 업로드
-                        try {
-                            myProfileImageURL = response.getJSONObject().getJSONObject("picture").getJSONObject("data").getString("url");
-                            myEmail = response.getJSONObject().getString("email");
-                            myName = response.getJSONObject().getString("name");
-
-                            ServerRequest serverRequest = new ServerRequest();
-                            serverRequest.addAccount(myName, myPhoneNumber, myEmail, myProfileImageURL);
-
-                        } catch(JSONException e) {
-                            e.printStackTrace();
-                        } catch(NullPointerException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-        ).executeAsync();
-
-
-        syncFriends();
-    }
-
-
-    //TODO: 폰 연락처 받아와 서버로 올려보냄(일부), 내부저장소에 저장
+    //TODO: 폰 연락처 받아와 서버로 올려보냄(일부), 구현 방식?
     private void syncFriends() {
 
-        final int permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS);
-        if (permissionCheck== PackageManager.PERMISSION_GRANTED){
-            //makeText(this, "연락처 열람 권한 있음.", Toast.LENGTH_LONG).show();
-        } else {
-            makeText(this, "연락처 열람 권한 없음.", Toast.LENGTH_LONG).show();
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this, Manifest.permission.READ_CONTACTS)){
-                makeText(this, "연락처 권한 설명 필요함.", Toast.LENGTH_LONG).show();
-            }else{
-                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_CONTACTS},1);
-            }
-        }
-
+        final List<Friend> friends = new ArrayList<>();
         resolver = this.getContentResolver();
-        cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
-
-
-        //TODO 서버로 보내라: ServerRequest 형식에 맞춰 수정할것, 보낼정보: 번호와 이름 뿐.
-        JSONArray friends = new JSONArray();
+        cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
         while (cursor.moveToNext()) {
-            JSONObject friend = new JSONObject(); //그냥 array만 해도 괜찮을듯
 
             String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
             String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-
             Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[] { id }, null);
 
-            //Log.i("MY INFO", id + " = " + name);
             while (phoneCursor.moveToNext()) {
                 String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                //Log.i("MY INFO", id + " = " + phoneNumber);
-
-                //TODO
+                friends.add(new Friend(phoneNumber, name));
             }
-
-            friends.put(friend);
         }
-
-
-
-
-
-
-        /*while(cursor.moveToNext()){
-            String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-
-            Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
-                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{ id  }, null);
-
-            //Log.i("MY INFO", id + " = " + name);
-            while(phoneCursor.moveToNext()) {
-                String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                //Log.i("MY INFO", id + " = " + phoneNumber);
-
-                adapter.addItem(new phoneItem(name, phoneNumber));
-
+        cursor.close();
+        (new AsyncTask<Void,Void,Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                new ServerRequest().setContacts(friends);
+                return null;
             }
-
-        }*/
+        }).execute();
+        update();
     }
 
 
@@ -509,29 +304,45 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(FacebookSdk.isFacebookRequestCode(requestCode)) {
-            super.onActivityResult(requestCode, resultCode, data);
-            callbackManager.onActivityResult(requestCode, resultCode, data);
-        }
-
-        //TODO: 제목, description추가해서 업로드, id는 mongo에서 관리
-        //TODO: 이미지 이름 지정할 때 잘하기
-        else if(requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
-            Uri imageUri = Uri.parse(mCurrentPhotoPath);
-            String fileNameInDB = (new File(imageUri.toString())).getName();
-
+        //TODO: 서버로 이미지 올리기
+        if(requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
+            final Uri imageUri = Uri.parse(mCurrentPhotoPath);
+            final String fileNameInDB = (new File(imageUri.toString())).getName();
             Log.d("     captured image", fileNameInDB);
+            (new AsyncTask<Void,Void,Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    (new ServerRequest()).uploadFile(fileNameInDB, new File(imageUri.getPath()));
+                    return null;
+                }
+            }).execute();
+
         }
         else if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
-            Uri uri = data.getData();
-
+            final Uri uri = data.getData();
 
             String timeStamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
-            String fileNameInDB = myPhoneNumber + "_" + timeStamp + ".jpg";
+            final String fileNameInDB = myPhoneNumber + "_" + timeStamp + ".jpg";
             Log.d("        chosen image", fileNameInDB);
             //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+            (new AsyncTask<Void,Void,Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    (new ServerRequest()).uploadFile(fileNameInDB, new File(uri.getPath()));
+                    return null;
+                }
+            }).execute();
 
         }
+
+        update();
+    }
+
+    public void update() {
+        FriendsFragment ff = (FriendsFragment) pagerAdapter.getRegisteredFragment(0);
+        ProfileFragment pf = (ProfileFragment) pagerAdapter.getRegisteredFragment(1);
+        ff.update();
+        pf.update();
     }
 }
 

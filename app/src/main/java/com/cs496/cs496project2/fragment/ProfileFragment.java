@@ -1,6 +1,7 @@
 package com.cs496.cs496project2.fragment;
 
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -25,9 +26,9 @@ public class ProfileFragment extends Fragment {
 
     private ArrayList<Image> images;
     private Image header;
-    private ProfileAdapter adapter;
+    public ProfileAdapter adapter;
     private RecyclerView recyclerView;
-    String myPhoneNumber;
+    String phoneNumber;
 
     public static ProfileFragment newInstance() {
         return new ProfileFragment();
@@ -46,9 +47,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstances) {
         super.onCreate(savedInstances);
-
-
-
     }
 
     @Override
@@ -61,23 +59,25 @@ public class ProfileFragment extends Fragment {
         if (args != null) {
             //전달받은 친구 프로필 <- 친구의 정보는 friendfragment에서 받아오므로 여기서는 데이터를 사용만 한다
             Friend friend = (Friend) args.getSerializable("friend");
+            phoneNumber = friend.getPhoneNumber();
             header = new Image();
             header.setImageUrl(friend.getProfileImageUrl());
             header.setTitle(friend.getName());
             header.setDescription(friend.getEmail());
             //이미지 받아오기
-            images = friend.getImages();
+            images = friend.fetchImages();
 
         } else {
-            //TODO: 내 프로필: 사진만 서버에서 가져온다?
-            //MainActivity.myPhoneNumber;
-            images = new ArrayList<>();
+            phoneNumber = MainActivity.myPhoneNumber;
             header = new Image();
-            header.setImageUrl(MainActivity.myProfileImageURL);
+            images = new ArrayList<>();
+            SharedPreferences pref = getActivity().getSharedPreferences("registration", 0);
+            String myProfileImageUrl = pref.getString("profile_image_url", "");
+            header.setImageUrl(myProfileImageUrl);
         }
 
 
-        adapter = new ProfileAdapter(getActivity().getApplicationContext());
+        adapter = new ProfileAdapter(getActivity().getApplicationContext(), phoneNumber);
         adapter.setHeader(header);
         adapter.setItems(images);
 
@@ -111,6 +111,10 @@ public class ProfileFragment extends Fragment {
 
         //fetchImages();
         return view;
+    }
+
+    public void update() {
+
     }
 
 }
