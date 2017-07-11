@@ -16,6 +16,18 @@ module.exports = {
                 });
         },
 
+        isRegister : (req, res) => {
+                var phoneNumber = req.params.phoneNumber;
+
+                Account.find({'phoneNumber' : phoneNumber}, (err, account) => {
+                        if(account.length == 0) {
+                                res.send("false");
+                        } else {
+                                res.send("true")
+                        }
+                })
+        },
+
         getAllAccount : (req, res) => {
                 var phoneNumber = req.params.phoneNumber;
 

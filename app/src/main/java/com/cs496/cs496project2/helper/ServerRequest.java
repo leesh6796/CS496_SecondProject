@@ -2,6 +2,7 @@ package com.cs496.cs496project2.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.cs496.cs496project2.model.Friend;
@@ -245,6 +246,24 @@ public class ServerRequest {
         }
 
         return "";
+    }
+
+    public boolean isRegister(String phoneNumber) {
+        OkHttpClient client = new OkHttpClient();
+        String api = this.url + "api/" + phoneNumber + "/isregister";
+
+        Request req = new Request.Builder().url(api).build();
+        try {
+            Response response = client.newCall(req).execute();
+            String body = response.body().string();
+
+            if(body == "true") return true;
+            else if(body == "false") return false;
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
 

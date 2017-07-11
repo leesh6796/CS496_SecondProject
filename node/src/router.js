@@ -19,6 +19,7 @@ var multerInstance = multer({storage:storage});
 
 //router.route('/api/account/add/:name/:phoneNumber/:email/:profilePictureURL').put(account.addAccount);
 router.route('/api/account/add').put(account.addAccount);
+router.route('/api/:phoneNumber/isregister').get(account.isRegister);
 router.route('/api/dev/account/get/all').get(account.getAllAccount);
 router.route('/api/:phoneNumber/get/account').get(account.getAccountInfo);
 
