@@ -1,5 +1,6 @@
 package com.cs496.cs496project2.fragment;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,11 +9,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.cs496.cs496project2.MainActivity;
 import com.cs496.cs496project2.R;
+import com.cs496.cs496project2.activity.ImageViewerActivity;
 import com.cs496.cs496project2.adapter.GridViewAdapter;
+import com.cs496.cs496project2.helper.GridViewImgItem;
 import com.cs496.cs496project2.helper.ServerRequest;
 
 import java.util.ArrayList;
@@ -34,13 +38,25 @@ public class GalleryFragment extends Fragment {
 
         GridView grid = (GridView)rootView.findViewById(R.id.galleryGridView);
         grid.setAdapter(adapter);
-        Log.i("진입", "성공");
+
+        // GridView Item Click EventListener
+        grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView parent, View view, int pos, long id) {
+                GridViewImgItem item = (GridViewImgItem)parent.getItemAtPosition(pos);
+
+                Intent intent = new Intent(getActivity(), ImageViewerActivity.class);
+                intent.putExtra("url", adapter.getItem(pos).getUrl());
+                startActivity(intent);
+            }
+        });
 
         update();
 
         return rootView;
     }
 
+    // Glide로 사진을 GridView에 추가한다.
     public void update() {
         adapter.clearItem();
 
@@ -50,17 +66,15 @@ public class GalleryFragment extends Fragment {
             @Override
             public List<String> doInBackground(Void... args) {
                 List<String> urls;
-                Log.i("진입", "성공2");
 
-                // 다른 사람의 갤러리를 로드한다면
+                // 내 갤러리를 로드할 때
                 if(args instanceof Void[]) {
                     String phoneNumber = MainActivity.myPhoneNumber;
-                    Log.i("phoneNumber", phoneNumber);
                     urls = (new ServerRequest()).getGallery(phoneNumber);
                 }
+                // 다른 사람 갤러리 로드할 때
                 else {
                     urls = new ArrayList<String>();
-                    Log.i("진입", args.toString());
                 }
 
                 return urls;

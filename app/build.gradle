@@ -34,6 +34,13 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile files('src/main/lib/httpclient-4.5.3.jar')
+    compile files('src/main/lib/httpcore-4.4.6.jar')
+    //compile files('src/main/lib/httpmime-4.5.3.jar')
+    compile('org.apache.httpcomponents:httpmime:4.3.6') {
+        exclude module: 'httpclient'
+    }
+
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
@@ -42,14 +49,8 @@ dependencies {
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    testCompile 'junit:junit:4.12'
-    compile files('src/main/lib/httpclient-4.5.3.jar')
-    compile files('src/main/lib/httpcore-4.4.6.jar')
-    //compile files('src/main/lib/httpmime-4.5.3.jar')
-    compile('org.apache.httpcomponents:httpmime:4.3.6') {
-        exclude module: 'httpclient'
-    }
     compile 'org.apache.httpcomponents:httpclient-android:4.3.5'
-
     compile 'com.karumi:headerrecyclerview:1.1.0'
+    testCompile 'junit:junit:4.12'
+    compile 'com.commit451:PhotoView:1.2.4'
 }

@@ -32,6 +32,8 @@ module.exports = {
                 })
 
                 res.send(file);
+                console.log(Date.now());
+                console.log("File Upload");
                 console.log(file);
         },
 
@@ -56,5 +58,8 @@ module.exports = {
                 var img = fs.readFileSync('public/img/' + filename);
                 res.writeHead(200, {'Content-Type': mime[extension]});
                 res.end(img, 'binary'); // binary로 보낸다.
+
+                console.log(Date.now());
+                console.log("Get Image " + filename);
         }
 };
