@@ -23,7 +23,13 @@
         </menu>
     </item>
 
-    <item android:title="Match">
+    <item android:title="Registration">
+        <menu>
+            <item
+                android:id="@+id/nav_logoff"
+                android:icon="@android:drawable/ic_menu_delete"
+                android:title="Log Off" />
+        </menu>
     </item>
 
 </menu>
