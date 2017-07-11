@@ -26,14 +26,13 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
             case 0: return new FriendsFragment();
             //case 1: return new ProfileFragment();
             case 1: return new GalleryFragment();
-            case 2: return new MatchFragment();
         }
         return null;
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return 2;
     }
 
     @Override

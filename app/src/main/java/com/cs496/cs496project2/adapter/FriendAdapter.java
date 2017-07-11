@@ -59,6 +59,8 @@ public class FriendAdapter extends BaseAdapter implements Filterable {
 
         final FriendItemView view = (FriendItemView) ((convertView != null) ? convertView : new FriendItemView(context));
         final Friend item = items.get(position);
+        view.setName(item.getName());
+        view.setPhoneNumber(item.getPhoneNumber());
 
         (new AsyncTask<Void,Void,String>() {
             @Override
@@ -67,11 +69,7 @@ public class FriendAdapter extends BaseAdapter implements Filterable {
             }
             @Override
             protected void onPostExecute(String temp) {
-
-                view.setName(item.getName());
-                view.setPhoneNumber(item.getPhoneNumber());
                 view.setImage(temp);
-
             }
         }).execute();
 

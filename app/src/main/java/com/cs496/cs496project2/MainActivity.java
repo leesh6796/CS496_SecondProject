@@ -57,8 +57,6 @@ public class MainActivity extends AppCompatActivity
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private ViewPager viewPager;
-    private TabLayout tabLayout;
-    private String[] pageTitle = {"Friends", "Me", "Match"};
     private MainViewPagerAdapter pagerAdapter;
     private Activity thisActivity = this;
 
@@ -159,6 +157,8 @@ public class MainActivity extends AppCompatActivity
             camera();
         } else if (id == R.id.nav_import_local) {
             importFromLocalStorage();
+        } else if (id == R.id.nav_logoff) {
+            logoff();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -211,29 +211,8 @@ public class MainActivity extends AppCompatActivity
         //viewpager and tab layout setup//////////////////////////////////////////////////////////////////
         viewPager = (ViewPager) findViewById(R.id.view_pager);
 
-        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        for(int i = 0; i < 3; i++)
-            tabLayout.addTab(tabLayout.newTab().setText(pageTitle[i]));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
         pagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
-            }
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
-        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -342,6 +321,12 @@ public class MainActivity extends AppCompatActivity
         mCurrentPhotoPath = image.getAbsolutePath();
 
         return image;
+    }
+
+
+    private void logoff() {
+        getSharedPreferences("registration",0).edit().clear().commit();
+        initRegistration();
     }
 
 
