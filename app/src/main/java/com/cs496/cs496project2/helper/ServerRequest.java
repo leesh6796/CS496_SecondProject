@@ -178,7 +178,7 @@ public class ServerRequest {
             return account.getString("profilePictureURL");
         } catch(JSONException e) {
             //e.printStackTrace();
-            Log.e(phoneNumber, "is not registered");
+            Log.d(phoneNumber, "is not registered");
         } catch(IOException e) {
             e.printStackTrace();
         }

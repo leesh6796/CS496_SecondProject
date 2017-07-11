@@ -29,7 +29,7 @@ public class ImageViewerActivity extends AppCompatActivity {
         Glide.with(this).load(url).centerCrop().into(img);*/
 
         PhotoView photoView = (PhotoView)findViewById(R.id.targetImg);
-        Glide.with(this).load(url).centerCrop().diskCacheStrategy(DiskCacheStrategy.SOURCE).into(photoView);
+        Glide.with(this).load(url).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(photoView);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
