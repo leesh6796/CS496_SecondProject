@@ -17,5 +17,6 @@
     </string>
 
     <string name="hello_user">Hello!</string>
+    <string name="title_activity_image_viewer">ImageViewerActivity</string>
 
 </resources>

@@ -53,7 +53,7 @@ public class GridViewAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int pos) {
+    public GridViewImgItem getItem(int pos) {
         return gridViewItemList.get(pos);
     }
 
