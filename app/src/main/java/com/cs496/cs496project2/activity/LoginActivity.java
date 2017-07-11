@@ -314,7 +314,6 @@ public class LoginActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... params) {
 
             register();
-            getContacts();
             return true;
         }
 
@@ -364,14 +363,7 @@ public class LoginActivity extends AppCompatActivity {
             edit.commit();
         }
 
-        private void getContacts() {
-            SharedPreferences pref = getSharedPreferences("contacts", 0);
-            SharedPreferences.Editor edit = pref.edit();
-            //TODO: 연락처를 어떻게 할지?
 
-            edit.commit();
-
-        }
     }
 
 
