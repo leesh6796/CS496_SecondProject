@@ -60,7 +60,10 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
             @Override
             protected Void doInBackground(Void... voids) {
                 List<String> temp = (new ServerRequest()).getGallery(phoneNumber);
-                for(String url : temp) urls.add(url);
+                for(String url : temp) {
+                    Log.i("어라 추가", url);
+                    urls.add(url);
+                }
                 return null;
             }
         }).execute();
@@ -103,6 +106,7 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
     @Override
     public void onBindItemViewHolder(RecyclerView.ViewHolder holder, int position) {
         ImageViewHolder imageViewHolder = (ImageViewHolder) holder;
+        Log.i("Position", String.valueOf(position));
 
         //TODO: image sources! -> 으악
         Glide.with(context)

@@ -350,7 +350,7 @@ public class LoginActivity extends AppCompatActivity {
             Uri uri = profile.getProfilePictureUri(800,800);
             try {
                 MainActivity.myProfileImageURL = new URL(uri.toString()).toString();
-                Log.e("            My Profile Image Url", MainActivity.myProfileImageURL);
+                Log.e("My Profile Image Url", MainActivity.myProfileImageURL);
                 edit.putString("profile_image_url", MainActivity.myProfileImageURL);
             } catch (MalformedURLException e) {
                 Toast.makeText(getApplicationContext(), "Malformed URL", Toast.LENGTH_SHORT).show();

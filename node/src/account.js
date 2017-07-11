@@ -40,6 +40,7 @@ module.exports = {
                                 });
 
                                 newAccount.save();
+                                console.log({'name':name, 'phoneNumber':phoneNumber, 'result':1});
                                 return res.json({'result':1});
                         }
                         // 중복되면 만들지 않는다.
