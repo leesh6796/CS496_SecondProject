@@ -15,7 +15,6 @@ import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -28,15 +27,17 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.cs496.cs496project2.activity.GuestBookActivity;
 import com.cs496.cs496project2.activity.LoginActivity;
 import com.cs496.cs496project2.adapter.MainViewPagerAdapter;
 import com.cs496.cs496project2.fragment.FriendsFragment;
 import com.cs496.cs496project2.fragment.GalleryFragment;
-import com.cs496.cs496project2.fragment.ProfileFragment;
 import com.cs496.cs496project2.helper.ServerRequest;
 import com.cs496.cs496project2.model.Friend;
 import com.facebook.AccessToken;
@@ -55,8 +56,6 @@ public class MainActivity extends AppCompatActivity
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private ViewPager viewPager;
-    private TabLayout tabLayout;
-    private String[] pageTitle = {"Friends", "Me", "Match"};
     private MainViewPagerAdapter pagerAdapter;
     private Activity thisActivity = this;
 
@@ -74,10 +73,11 @@ public class MainActivity extends AppCompatActivity
     public static String myName = "";
     public static String myProfileImageURL = "";
 
-    final int READ_CONTACT_CODE = 0;
-    static final int LOG_IN_REQUEST =1;
-    static final int PICK_IMAGE_REQUEST = 2;
-    static final int CAMERA_REQUEST = 3;
+    final int READ_CONTACT_CODE = 987;
+    final int WRITE_EXTERNAL_STORAGE_CODE = 745;
+    static final int LOG_IN_REQUEST =1231;
+    static final int PICK_IMAGE_REQUEST = 2324;
+    static final int CAMERA_REQUEST = 35435;
     String mCurrentPhotoPath;
 
     private ArrayList<Friend> rv = new ArrayList<>();
@@ -146,8 +146,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    //TODO: option에 로그아웃 만들기
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -155,11 +153,13 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_sync_friends) {
-            trySyncFriends(); //TODO -> 자동으로 다시 로그인 하기?, Intent 전달?
+            trySyncFriends();
         } else if (id == R.id.nav_camera) {
             camera();
         } else if (id == R.id.nav_import_local) {
-            importFromLocalStorage();
+            tryImport();
+        } else if (id == R.id.nav_logoff) {
+            logoff();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -188,40 +188,32 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        navigationProfileImage = (ImageView) findViewById(R.id.nav_header_image);
-        navigationName = (TextView) findViewById(R.id.nav_header_name);
-        navigationPhoneNumber = (TextView) findViewById(R.id.nav_header_phone_number);
+        View navHeader = navigationView.getHeaderView(0);
+
+        navigationProfileImage = (ImageView) navHeader.findViewById(R.id.nav_header_image);
+        navigationName = (TextView) navHeader.findViewById(R.id.nav_header_name);
+        navigationPhoneNumber = (TextView) navHeader.findViewById(R.id.nav_header_phone_number);
+
+        SharedPreferences pref = getSharedPreferences("registration", 0);
+        navigationPhoneNumber.setText(pref.getString("phone_number", ""));
+        navigationName.setText(pref.getString("name", ""));
+        myProfileImageURL = pref.getString("profile_image_url", "");
+
+        Glide.with(this)
+                .load(myProfileImageURL)
+                .placeholder(R.drawable.person)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .crossFade()
+                .into(navigationProfileImage);
+
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //viewpager and tab layout setup//////////////////////////////////////////////////////////////////
         viewPager = (ViewPager) findViewById(R.id.view_pager);
 
-        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        for(int i = 0; i < 3; i++)
-            tabLayout.addTab(tabLayout.newTab().setText(pageTitle[i]));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
         pagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
-            }
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
-        /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
     }
 
@@ -271,19 +263,19 @@ public class MainActivity extends AppCompatActivity
         }).execute();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch(requestCode) {
-            case READ_CONTACT_CODE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                }
+
+    private void tryImport() {
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            importFromLocalStorage();
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
         }
     }
 
     private void importFromLocalStorage() { //갤러리에서 선택 후 onActivityResult로
-        Intent pickImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent pickImageIntent = new Intent(Intent.ACTION_PICK);
         pickImageIntent.setType("image/*");
         startActivityForResult(Intent.createChooser(pickImageIntent, "Select picture to upload"), PICK_IMAGE_REQUEST);
     }
@@ -330,6 +322,12 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    private void logoff() {
+        getSharedPreferences("registration",0).edit().clear().commit();
+        initRegistration();
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -339,6 +337,7 @@ public class MainActivity extends AppCompatActivity
 
         else if(requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             final Uri imageUri = Uri.parse(mCurrentPhotoPath);
+
             final String fileNameInDB = (new File(imageUri.toString())).getName();
             Log.e("     captured image", imageUri.toString());
             (new AsyncTask<Void,Void,Void>() {
@@ -355,17 +354,23 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        //TODO: 에러
         else if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
-            final Uri uri = data.getData();
+
             String timeStamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
             final String fileNameInDB = myPhoneNumber + "_" + timeStamp + ".jpg";
+
+            Uri uri = data.getData();
+            String[] filePath = {MediaStore.Images.Media.DATA};
+            Cursor cursor = this.getContentResolver().query(uri, filePath, null, null, null);
+            cursor.moveToFirst();
+            final String imagePath = cursor.getString(cursor.getColumnIndex(filePath[0]));
+            cursor.close();
             Log.e("        chosen image", uri.getPath());
 
             (new AsyncTask<Void,Void,Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
-                    (new ServerRequest(thisActivity)).uploadFile(fileNameInDB, new File(uri.getPath()));
+                    (new ServerRequest(thisActivity)).uploadFile(fileNameInDB, new File(imagePath));
                     return null;
                 }
                 @Override
@@ -378,38 +383,28 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode) {
+            case READ_CONTACT_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    syncFriends();
+                }
+            case WRITE_EXTERNAL_STORAGE_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    importFromLocalStorage();
+                }
+        }
+    }
+
     public void update() {
         FriendsFragment ff = (FriendsFragment) pagerAdapter.getRegisteredFragment(0);
         GalleryFragment pf = (GalleryFragment) pagerAdapter.getRegisteredFragment(1);
         ff.update();
         pf.update();
     }
-
-    /**
-     * helper to retrieve the path of an image URI
-     */
-    public String getPath(Uri uri) {
-        // just some safety built in
-        if( uri == null ) {
-            // TODO perform some logging or show user feedback
-            return null;
-        }
-        // try to retrieve the image from the media store first
-        // this will only work for images selected from gallery
-        String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        if( cursor != null ){
-            int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            String path = cursor.getString(column_index);
-            cursor.close();
-            return path;
-        }
-        // this is our fallback here
-        return uri.getPath();
-    }
-
 
 }
 

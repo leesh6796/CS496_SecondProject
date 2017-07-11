@@ -13,9 +13,11 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -172,10 +174,12 @@ public class ServerRequest {
 
         try {
             Response response = client.newCall(req).execute();
-            JSONArray accounts = new JSONArray(response.body().string());
-            JSONObject account = accounts.getJSONObject(0);
+            JSONObject account = new JSONObject(response.body().string());
             return account.getString("profilePictureURL");
-        } catch(Exception e) {
+        } catch(JSONException e) {
+            //e.printStackTrace();
+            Log.e(phoneNumber, "is not registered");
+        } catch(IOException e) {
             e.printStackTrace();
         }
 

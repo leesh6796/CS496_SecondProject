@@ -15,7 +15,6 @@ public class Friend implements Serializable {
 
     private String phoneNumber, name, email;
     private String profileImageUrl;
-    private Uri profileImageUri;
     private ArrayList<Image> images;
     public boolean isRegistered = false;
 
@@ -25,6 +24,11 @@ public class Friend implements Serializable {
     public Friend(String phoneNumber, String name) {
         this.phoneNumber = phoneNumber;
         this.name = name;
+    }
+    public Friend(String phoneNumber, String name, String profileImageUrl) {
+        this.phoneNumber = phoneNumber;
+        this.name = name;
+        this.profileImageUrl = profileImageUrl;
     }
 
     public String getPhoneNumber() {
@@ -57,10 +61,6 @@ public class Friend implements Serializable {
         this.profileImageUrl = profileImageUrl;
         isRegistered = true;
     }
-
-    public Uri getProfileImageUri() { return profileImageUri; }
-
-    public void setProfileImageUri(Uri profileImageUri) { this.profileImageUri = profileImageUri; }
 
     public ArrayList<Image> getImages() {
         return images;

@@ -4,7 +4,7 @@
     android:layout_height="wrap_content">
 
 
-    <!--<ImageView
+    <ImageView
         android:id="@+id/profile_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -42,7 +42,7 @@
             android:textColor="@android:color/white"
             android:text="Phone number"/>
 
-    </LinearLayout>-->
+    </LinearLayout>
 
 
 </com.cs496.cs496project2.helper.SquareLayout>
