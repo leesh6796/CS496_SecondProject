@@ -26,10 +26,10 @@ import java.util.List;
 
 public class FriendsFragment extends Fragment {
 
-    EditText editText;
+    EditText editTextFilter;
     ListView listView;
     public FriendAdapter adapter;
-    ArrayList<Friend> friends = new ArrayList<>();
+    ArrayList<Friend> friends;
 
 
     public FriendsFragment() {
@@ -39,7 +39,23 @@ public class FriendsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstances) {
         super.onCreate(savedInstances);
-        friends.clear();
+
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_friends, container, false);
+
+        listView = (ListView) view.findViewById(R.id.friends);
+        editTextFilter = (EditText)view.findViewById(R.id.editTextFilter);
+        update();
+        return view;
+    }
+
+    public void update() {
+
+        friends = new ArrayList<>();
 
         (new AsyncTask<Void, Void, List<Friend>>() {
             @Override
@@ -50,40 +66,34 @@ public class FriendsFragment extends Fragment {
             @Override
             protected void onPostExecute(List<Friend> temp) {
                 friends = (ArrayList<Friend>) temp;
+                adapter = new FriendAdapter(getActivity(), friends);
+                adapter.notifyDataSetChanged();
+                listView.setAdapter(adapter);
+
             }
         }).execute();
 
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_friends, container, false);
-
-        listView = (ListView) view.findViewById(R.id.friends);
-
-        adapter = new FriendAdapter(getActivity(), friends);
-        listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             public void onItemClick(AdapterView<?> adapterVIew, View view, int position, long id){
-            Friend friend = (Friend) adapter.getItem(position);
+                Friend friend = (Friend) adapter.getItem(position);
 
-            //TODO: 태스트해봐야.
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("friend", friend);
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ProfileFragment profileFragment = ProfileFragment.newInstance();
-            profileFragment.setArguments(bundle);
-            ft.replace(R.id.friends_tap_content, profileFragment, "profile");
-            ft.addToBackStack(null);
-            ft.commit();
+                //TODO: 태스트해봐야.
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("friend", friend);
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ProfileFragment profileFragment = ProfileFragment.newInstance();
+                profileFragment.setArguments(bundle);
+                ft.replace(R.id.friends_tap_content, profileFragment, "profile");
+                ft.addToBackStack(null);
+                ft.commit();
             }
         });
 
 
         listView.setTextFilterEnabled(true);
 
-        EditText editTextFilter = (EditText)view.findViewById(R.id.editTextFilter);
+
         editTextFilter.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
@@ -98,11 +108,6 @@ public class FriendsFragment extends Fragment {
             }
         });
 
-        adapter.notifyDataSetChanged();
-        return view;
-    }
-
-    public void update() {
 
     }
 

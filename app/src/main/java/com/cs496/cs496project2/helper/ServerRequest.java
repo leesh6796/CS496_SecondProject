@@ -112,7 +112,7 @@ public class ServerRequest {
 
             for(i=0; i<contacts.length(); i++) {
                 JSONObject iter = contacts.getJSONObject(i);
-                Friend item = new Friend(iter.getString("myPhoneNumber"));
+                Friend item = new Friend(iter.getString("phoneNumber"));
                 item.setName(iter.getString("name"));
 
                 Log.i("name", iter.getString("name"));
@@ -166,6 +166,21 @@ public class ServerRequest {
         }
     }
 
+    public String getProfileImageUrl(String phoneNumber) {
+        OkHttpClient client = new OkHttpClient();
+        Request req = new Request.Builder().url(url + "api/" + phoneNumber + "/get/account").build();
+
+        try {
+            Response response = client.newCall(req).execute();
+            JSONArray accounts = new JSONArray(response.body().string());
+            JSONObject account = accounts.getJSONObject(0);
+            return account.getString("profilePictureURL");
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
 
 

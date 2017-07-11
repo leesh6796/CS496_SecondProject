@@ -1,6 +1,7 @@
 package com.cs496.cs496project2.adapter;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,10 +9,15 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.cs496.cs496project2.R;
 import com.cs496.cs496project2.helper.FriendItemView;
+import com.cs496.cs496project2.helper.ServerRequest;
 import com.cs496.cs496project2.helper.SoundSearcher;
 import com.cs496.cs496project2.model.Friend;
 
+import java.io.File;
 import java.util.ArrayList;
 
 
@@ -23,6 +29,7 @@ public class FriendAdapter extends BaseAdapter implements Filterable {
     ArrayList<Friend> filterList;
 
     public FriendAdapter(Context context, ArrayList<Friend> items) {
+        this.context = context;
         this.items = items;
         filterList = items;
     }
@@ -49,14 +56,24 @@ public class FriendAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        FriendItemView view = (FriendItemView) convertView;
-        if (view == null) {
-            view = new FriendItemView(context.getApplicationContext());
-        }
-        Friend item = items.get(position);
-        view.setName(item.getName());
-        view.setPhoneNumber(item.getPhoneNumber());
-        view.setImage(item.getProfileImageUrl());
+
+        final FriendItemView view = (FriendItemView) ((convertView != null) ? convertView : new FriendItemView(context));
+        final Friend item = items.get(position);
+
+        (new AsyncTask<Void,Void,String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                return (new ServerRequest(context)).getProfileImageUrl(item.getPhoneNumber());
+            }
+            @Override
+            protected void onPostExecute(String temp) {
+
+                view.setName(item.getName());
+                view.setPhoneNumber(item.getPhoneNumber());
+                view.setImage(temp);
+
+            }
+        }).execute();
 
         return view;
     }
