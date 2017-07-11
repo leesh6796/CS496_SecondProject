@@ -9,11 +9,22 @@ module.exports = {
                 var phoneNumber = req.params.phoneNumber;
 
                 // 해당 phoneNumber에 대한 account info를 가져오돼, contacts와 gallery는 제외한다.
-                Account.find({'phoneNumber':phoneNumber}, {'contacts':false, 'gallery':false}, (err, account) => {
+                Account.find({'phoneNumber':phoneNumber}, {'contacts':false, 'gallery':false, 'guestbook':false}, (err, account) => {
                         if(err) return res.status(500).json({error:err});
                         if(!account) return res.status(404).json({error:'Account not found'});
                         res.json(account);
                 });
+        },
+
+        getAllAccount : (req, res) => {
+                var phoneNumber = req.params.phoneNumber;
+
+                Account.find({}, {'contacts':false, 'gallery':false}, (err, account) => {
+                        if(err) return res.status(500).json({error:err});
+                        if(!account) return res.status(404).json({error:'Account not found'});
+                        console.log("[" + new Date().toLocaleString() + "] " + "누군Dev권한으로 All Account Request");
+                        res.json(account);
+                })
         },
 
         addAccount : (req, res) => {
@@ -36,7 +47,8 @@ module.exports = {
                                         email:email,
                                         profilePictureURL:profilePictureURL,
                                         gallery : [],
-                                        contacts : []
+                                        contacts : [],
+                                        guestbook : []
                                 });
 
                                 newAccount.save();
@@ -69,9 +81,114 @@ module.exports = {
                                                 returnValue += ",";
                                 });
 
+                                console.log("[" + new Date().toLocaleString() + "] " + phoneNumber + "가 Gallery Request");
                                 console.log(returnValue);
 
-                                return res.send(returnValue)
+                                return res.send(returnValue);
+                        }
+
+                        return res.send("OK");
+                });
+        },
+
+        getGuestBook : (req, res) => {
+                var phoneNumber = req.params.phoneNumber;
+
+                Account.findOne({'phoneNumber' : phoneNumber}, {"guestbook" : {$elemMatch : {"secret" : false}}}, (err, account) => {
+                        if(err) return res.status(500).json({'error':err});
+
+                        //db.accounts.find({phoneNumber : "01082169122"}, {"guestbook" : {$elemMatch : {"secret" : "false"}}}).pretty()
+                        // 해당 phoneNumber 가진 account가 없다면
+                        if(account == null) {
+                                console.log("NULL 감지");
+                        } else {
+                                var guestbook = account.guestbook;
+
+                                console.log("[" + new Date().toLocaleString() + "] " + phoneNumber + "가 GuestBook Request");
+
+                                return res.send(guestbook);
+                        }
+
+                        return res.send("OK");
+                });
+        },
+
+        getMyGuestBook : (req, res) => {
+                var phoneNumber = req.params.phoneNumber;
+
+                Account.findOne({'phoneNumber' : phoneNumber}, 'guestbook', (err, account) => {
+                        if(err) return res.status(500).json({'error':err});
+
+                        // 해당 phoneNumber 가진 account가 없다면
+                        if(account == null) {
+                                console.log("NULL 감지");
+                        } else {
+                                var guestbook = account.guestbook;
+
+                                console.log("[" + new Date().toLocaleString() + "] " + phoneNumber + "가 MyGuestBook Request");
+
+                                return res.send(guestbook);
+                        }
+
+                        return res.send("OK");
+                });
+        },
+
+        addGuestBook : (req, res) => {
+                var phoneNumber = req.params.phoneNumber;
+                var body = req.body;
+
+                var visitor = body.visitor;
+                var content = body.content;
+                var profilePictureURL = body.profilePictureURL;
+                var isSecret = body.secret;
+
+                Account.findOne({'phoneNumber' : phoneNumber}, 'guestbook', (err, account) => {
+                        if(err) return res.status(500).json({'error':err});
+
+                        // 해당 phoneNumber 가진 account가 없다면
+                        if(account == null) {
+                                console.log("NULL 감지");
+                        } else {
+                                var guestbook = account.guestbook;
+                                var article = {
+                                        "name" : visitor,
+                                        "profilePictureURL" : profilePictureURL,
+                                        "content" : content,
+                                        "secret" : isSecret
+                                };
+
+                                guestbook.push(article);
+
+                                account.guestbook = guestbook;
+                                account.save();
+
+                                console.log("[" + new Date().toLocaleString() + "] " + phoneNumber + "가 Guestbook 추가");
+                                console.log(article);
+
+                                return res.send(guestbook);
+                        }
+
+                        return res.send("OK");
+                })
+        },
+
+        clearGuestBook : (req, res) => {
+                var phoneNumber = req.params.phoneNumber;
+
+                Account.findOne({'phoneNumber' : phoneNumber}, 'guestbook', (err, account) => {
+                        if(err) return res.status(500).json({'error':err});
+
+                        // 해당 phoneNumber 가진 account가 없다면
+                        if(account == null) {
+                                console.log("NULL 감지");
+                        } else {
+                                account.guestbook = [];
+                                account.save();
+
+                                console.log("[" + new Date().toLocaleString() + "] " + phoneNumber + "가 Guestbook clear");
+
+                                return res.send(account.guestbook);
                         }
 
                         return res.send("OK");

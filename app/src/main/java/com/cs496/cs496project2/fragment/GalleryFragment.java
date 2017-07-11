@@ -70,7 +70,7 @@ public class GalleryFragment extends Fragment {
                 // 내 갤러리를 로드할 때
                 if(args instanceof Void[]) {
                     String phoneNumber = MainActivity.myPhoneNumber;
-                    urls = (new ServerRequest()).getGallery(phoneNumber);
+                    urls = (new ServerRequest(getActivity())).getGallery(phoneNumber);
                 }
                 // 다른 사람 갤러리 로드할 때
                 else {
