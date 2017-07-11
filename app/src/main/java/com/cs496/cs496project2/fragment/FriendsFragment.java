@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
@@ -26,16 +27,18 @@ import android.widget.Toast;
 
 import com.cs496.cs496project2.R;
 import com.cs496.cs496project2.adapter.FriendAdapter;
+import com.cs496.cs496project2.helper.ServerRequest;
 import com.cs496.cs496project2.model.Friend;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class FriendsFragment extends Fragment {
 
     EditText editText;
     ListView listView;
-    FriendAdapter adapter;
+    public FriendAdapter adapter;
     ArrayList<Friend> friends = new ArrayList<>();
 
     //핸드폰 저장소에서 불러오기 위해.
@@ -51,36 +54,7 @@ public class FriendsFragment extends Fragment {
         super.onCreate(savedInstances);
         friends.clear();
 
-//
-//        //TODO: 먼저 내부저장소에서 정보가져온다. 그 후 서버에도 정보가 있으면 덮어쓴다(프로필 사진을) 중복?
-//        resolver = this.getActivity().getApplicationContext().getContentResolver();
-//        cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-//
-//        while(cursor.moveToNext()) {
-//            Long id = cursor.getLong(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-//
-//            //TODO: 커서 에러!
-//            try {
-//                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-//                Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-//                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id.toString()}, null);
-//                String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-//
-//                Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id);
-//                Uri photoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
-//
-//                Friend friend = new Friend(phoneNumber, name);
-//                friend.setProfileImageUri(photoUri);
-//
-//                friends.add(friend);
-//            } catch (CursorIndexOutOfBoundsException e) {
-//                Log.w("      Cursor error", id.toString());
-//            }
-//
-//
-//        }
-//        cursor.close();
-
+        //TODO: 먼저 내부저장소에서 정보가져온다. 그 후 서버에도 정보가 있으면 덮어쓴다(프로필 사진을) 중복?
 
         //TODO 서버에 각 친구에 대한 요청
     }
@@ -90,6 +64,18 @@ public class FriendsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_friends, container, false);
 
         listView = (ListView) view.findViewById(R.id.friends);
+/*
+        (new AsyncTask<Void,Void,Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                List<Friend> temp = new ServerRequest().getContacts();
+                for (Friend friend : temp) {
+                    friends.add(friend);
+                }
+                return null;
+            }
+        }).execute();*/
+
 
         adapter = new FriendAdapter(getActivity(), friends);
         listView.setAdapter(adapter);
@@ -128,8 +114,12 @@ public class FriendsFragment extends Fragment {
             }
         });
 
-
+        adapter.notifyDataSetChanged();
         return view;
+    }
+
+    public void update() {
+
     }
 
 

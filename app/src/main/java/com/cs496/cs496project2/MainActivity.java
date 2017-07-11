@@ -56,10 +56,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 
 import com.cs496.cs496project2.activity.LoginActivity;
 import com.cs496.cs496project2.adapter.MainViewPagerAdapter;
+import com.cs496.cs496project2.fragment.FriendsFragment;
+import com.cs496.cs496project2.fragment.ProfileFragment;
 import com.cs496.cs496project2.helper.ServerRequest;
 import com.cs496.cs496project2.model.Friend;
 import com.facebook.AccessToken;
@@ -165,6 +168,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initRegistration() {
+
         Intent registrationIntent = new Intent(this, LoginActivity.class);
         startActivity(registrationIntent);
     }
@@ -220,48 +224,33 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    //TODO: 폰 연락처 받아와 서버로 올려보냄(일부), 내부저장소에 저장 -> 구현 방식?
+    //TODO: 폰 연락처 받아와 서버로 올려보냄(일부), 구현 방식?
     private void syncFriends() {
 
-        final int permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS);
-        if (permissionCheck== PackageManager.PERMISSION_GRANTED){
-            //makeText(this, "연락처 열람 권한 있음.", Toast.LENGTH_LONG).show();
-        } else {
-            makeText(this, "연락처 열람 권한 없음.", Toast.LENGTH_LONG).show();
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this, Manifest.permission.READ_CONTACTS)){
-                makeText(this, "연락처 권한 설명 필요함.", Toast.LENGTH_LONG).show();
-            }else{
-                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_CONTACTS},1);
-            }
-        }
-
+        final List<Friend> friends = new ArrayList<>();
         resolver = this.getContentResolver();
-        cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
-
-
-        //TODO 서버로 보내기: ServerRequest 형식에 맞춰 수정할것, 보낼정보: 번호와 이름 뿐. -> 꼭 여기서 처리해야하는지?
-        JSONArray friends = new JSONArray();
+        cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
         while (cursor.moveToNext()) {
-            JSONObject friend = new JSONObject(); //그냥 array만 해도 괜찮을듯
 
             String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
             String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-
             Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[] { id }, null);
 
-            //Log.i("MY INFO", id + " = " + name);
             while (phoneCursor.moveToNext()) {
                 String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                //Log.i("MY INFO", id + " = " + phoneNumber);
-
-                //TODO
+                friends.add(new Friend(phoneNumber, name));
             }
-
-            friends.put(friend);
         }
-
+        cursor.close();
+        (new AsyncTask<Void,Void,Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                new ServerRequest().setContacts(friends);
+                return null;
+            }
+        }).execute();
+        update();
     }
 
 
@@ -350,7 +339,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void update() {
-
+        FriendsFragment ff = (FriendsFragment) pagerAdapter.getRegisteredFragment(0);
+        ProfileFragment pf = (ProfileFragment) pagerAdapter.getRegisteredFragment(1);
+        ff.update();
+        pf.update();
     }
 }
 

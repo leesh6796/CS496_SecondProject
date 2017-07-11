@@ -73,7 +73,7 @@ public class ServerRequest {
                 JSONObject body = new JSONObject();
                 Friend iter = friends.get(i);
                 body.put("name", iter.getName());
-                body.put("myPhoneNumber", iter.getPhoneNumber());
+                body.put("phoneNumber", iter.getPhoneNumber());
 
                 arrFriends.put(body);
             }

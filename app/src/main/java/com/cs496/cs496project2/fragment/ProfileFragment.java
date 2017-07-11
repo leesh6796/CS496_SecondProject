@@ -1,6 +1,7 @@
 package com.cs496.cs496project2.fragment;
 
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -25,7 +26,7 @@ public class ProfileFragment extends Fragment {
 
     private ArrayList<Image> images;
     private Image header;
-    public static ProfileAdapter adapter;
+    public ProfileAdapter adapter;
     private RecyclerView recyclerView;
     String phoneNumber;
 
@@ -46,9 +47,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstances) {
         super.onCreate(savedInstances);
-
-
-
     }
 
     @Override
@@ -71,9 +69,11 @@ public class ProfileFragment extends Fragment {
 
         } else {
             phoneNumber = MainActivity.myPhoneNumber;
-            images = new ArrayList<>();
             header = new Image();
-            header.setImageUrl(MainActivity.myProfileImageURL);
+            images = new ArrayList<>();
+            SharedPreferences pref = getActivity().getSharedPreferences("registration", 0);
+            String myProfileImageUrl = pref.getString("profile_image_url", "");
+            header.setImageUrl(myProfileImageUrl);
         }
 
 
@@ -111,6 +111,10 @@ public class ProfileFragment extends Fragment {
 
         //fetchImages();
         return view;
+    }
+
+    public void update() {
+
     }
 
 }
