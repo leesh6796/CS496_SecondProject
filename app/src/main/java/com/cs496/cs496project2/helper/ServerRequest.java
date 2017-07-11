@@ -182,6 +182,44 @@ public class ServerRequest {
         return null;
     }
 
+    public List<GuestBookItem> getGuestBook(String phoneNumber, boolean my) {
+        OkHttpClient client = new OkHttpClient();
+
+        String apiURL = url + "api/" + phoneNumber + "/get/guestbook";
+
+
+        if(my) {
+            apiURL += "/my";
+        }
+
+        Request req = new Request.Builder().url(apiURL).build();
+
+        try {
+            Response response = client.newCall(req).execute();
+
+            JSONArray items = new JSONArray(response.body().string());
+            List<GuestBookItem> returnValue = new ArrayList<>();
+
+            int i;
+            for(i=0; i<items.length(); i++) {
+                JSONObject item = items.getJSONObject(i);
+                GuestBookItem ele = new GuestBookItem();
+
+                ele.setName(item.getString("name"));
+                ele.setContent(item.getString("content"));
+                ele.setProfilePictureURL(item.getString("profilePictureURL"));
+                ele.setSecret(item.getBoolean("secret"));
+
+                returnValue.add(ele);
+            }
+
+            return returnValue;
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
 
 }

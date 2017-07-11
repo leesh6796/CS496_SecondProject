@@ -31,6 +31,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cs496.cs496project2.activity.GuestBookActivity;
 import com.cs496.cs496project2.activity.LoginActivity;
 import com.cs496.cs496project2.adapter.MainViewPagerAdapter;
 import com.cs496.cs496project2.fragment.FriendsFragment;
@@ -131,6 +132,9 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            Intent intent = new Intent(this, GuestBookActivity.class);
+            startActivity(intent);
+
             super.onBackPressed();
         }
     }

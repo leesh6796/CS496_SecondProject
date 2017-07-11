@@ -36,9 +36,9 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
         public TextView nameView, phoneNumberView;
         public HeaderViewHolder(View view) {
             super(view);
-            profileImageView = (ImageView) view.findViewById(R.id.profile_image);
+            /*profileImageView = (ImageView) view.findViewById(R.id.profile_image);
             nameView = (TextView) view.findViewById(R.id.profile_name);
-            phoneNumberView = (TextView) view.findViewById(R.id.profile_phoneNumber);
+            phoneNumberView = (TextView) view.findViewById(R.id.profile_phoneNumber);*/
         }
     }
 

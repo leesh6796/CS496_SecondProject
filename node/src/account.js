@@ -9,7 +9,7 @@ module.exports = {
                 var phoneNumber = req.params.phoneNumber;
 
                 // 해당 phoneNumber에 대한 account info를 가져오돼, contacts와 gallery는 제외한다.
-                Account.find({'phoneNumber':phoneNumber}, {'contacts':false, 'gallery':false, 'guestbook':false}, (err, account) => {
+                Account.findOne({'phoneNumber':phoneNumber}, {'contacts':false, 'gallery':false, 'guestbook':false}, (err, account) => {
                         if(err) return res.status(500).json({error:err});
                         if(!account) return res.status(404).json({error:'Account not found'});
                         res.json(account);
@@ -22,7 +22,7 @@ module.exports = {
                 Account.find({}, {'contacts':false, 'gallery':false}, (err, account) => {
                         if(err) return res.status(500).json({error:err});
                         if(!account) return res.status(404).json({error:'Account not found'});
-                        console.log("[" + new Date().toLocaleString() + "] " + "누군Dev권한으로 All Account Request");
+                        console.log("[" + new Date().toLocaleString() + "] " + "누군가 Dev 권한으로 All Account Request");
                         res.json(account);
                 })
         },
@@ -35,7 +35,7 @@ module.exports = {
                 email = body.email;
                 profilePictureURL = body.profilePictureURL;
 
-                Account.find({'phoneNumber':phoneNumber}, (err, account) => {
+                Account.findOne({'phoneNumber':phoneNumber}, (err, account) => {
                         if(err) return res.status(500).json({'error':err});
 
                         // phoneNumber 중복 안되면 새 account를 추가한다.
@@ -94,28 +94,6 @@ module.exports = {
         getGuestBook : (req, res) => {
                 var phoneNumber = req.params.phoneNumber;
 
-                Account.findOne({'phoneNumber' : phoneNumber}, {"guestbook" : {$elemMatch : {"secret" : false}}}, (err, account) => {
-                        if(err) return res.status(500).json({'error':err});
-
-                        //db.accounts.find({phoneNumber : "01082169122"}, {"guestbook" : {$elemMatch : {"secret" : "false"}}}).pretty()
-                        // 해당 phoneNumber 가진 account가 없다면
-                        if(account == null) {
-                                console.log("NULL 감지");
-                        } else {
-                                var guestbook = account.guestbook;
-
-                                console.log("[" + new Date().toLocaleString() + "] " + phoneNumber + "가 GuestBook Request");
-
-                                return res.send(guestbook);
-                        }
-
-                        return res.send("OK");
-                });
-        },
-
-        getMyGuestBook : (req, res) => {
-                var phoneNumber = req.params.phoneNumber;
-
                 Account.findOne({'phoneNumber' : phoneNumber}, 'guestbook', (err, account) => {
                         if(err) return res.status(500).json({'error':err});
 
@@ -125,7 +103,7 @@ module.exports = {
                         } else {
                                 var guestbook = account.guestbook;
 
-                                console.log("[" + new Date().toLocaleString() + "] " + phoneNumber + "가 MyGuestBook Request");
+                                console.log("[" + new Date().toLocaleString() + "] " + phoneNumber + "가 GuestBook Request");
 
                                 return res.send(guestbook);
                         }
