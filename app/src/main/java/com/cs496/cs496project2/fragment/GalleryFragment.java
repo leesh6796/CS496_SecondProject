@@ -56,7 +56,7 @@ public class GalleryFragment extends Fragment {
                 if(args instanceof Void[]) {
                     String phoneNumber = MainActivity.myPhoneNumber;
                     Log.i("phoneNumber", phoneNumber);
-                    urls = (new ServerRequest()).getGallery(phoneNumber);
+                    urls = (new ServerRequest(getActivity())).getGallery(phoneNumber);
                 }
                 else {
                     urls = new ArrayList<String>();

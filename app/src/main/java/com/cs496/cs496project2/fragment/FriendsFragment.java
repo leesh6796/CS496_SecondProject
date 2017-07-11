@@ -2,6 +2,7 @@ package com.cs496.cs496project2.fragment;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -16,9 +17,11 @@ import android.widget.ListView;
 
 import com.cs496.cs496project2.R;
 import com.cs496.cs496project2.adapter.FriendAdapter;
+import com.cs496.cs496project2.helper.ServerRequest;
 import com.cs496.cs496project2.model.Friend;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class FriendsFragment extends Fragment {
@@ -28,9 +31,6 @@ public class FriendsFragment extends Fragment {
     public FriendAdapter adapter;
     ArrayList<Friend> friends = new ArrayList<>();
 
-    //핸드폰 저장소에서 불러오기 위해.
-    ContentResolver resolver;
-    Cursor cursor;
 
     public FriendsFragment() {
         // Required empty public constructor
@@ -41,9 +41,18 @@ public class FriendsFragment extends Fragment {
         super.onCreate(savedInstances);
         friends.clear();
 
-        //TODO: 먼저 내부저장소에서 정보가져온다. 그 후 서버에도 정보가 있으면 덮어쓴다(프로필 사진을) 중복?
+        (new AsyncTask<Void, Void, List<Friend>>() {
+            @Override
+            protected List<Friend> doInBackground(Void... voids) {
+                return (new ServerRequest(getActivity())).getContacts();
+            }
 
-        //TODO 서버에 각 친구에 대한 요청
+            @Override
+            protected void onPostExecute(List<Friend> temp) {
+                friends = (ArrayList<Friend>) temp;
+            }
+        }).execute();
+
     }
 
     @Override
@@ -51,35 +60,23 @@ public class FriendsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_friends, container, false);
 
         listView = (ListView) view.findViewById(R.id.friends);
-/*
-        (new AsyncTask<Void,Void,Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                List<Friend> temp = new ServerRequest().getContacts();
-                for (Friend friend : temp) {
-                    friends.add(friend);
-                }
-                return null;
-            }
-        }).execute();*/
-
 
         adapter = new FriendAdapter(getActivity(), friends);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             public void onItemClick(AdapterView<?> adapterVIew, View view, int position, long id){
-                Friend friend = (Friend) adapter.getItem(position);
+            Friend friend = (Friend) adapter.getItem(position);
 
-                //TODO: 태스트해봐야.
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("friend", friend);
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ProfileFragment profileFragment = ProfileFragment.newInstance();
-                profileFragment.setArguments(bundle);
-                ft.replace(R.id.friends_tap_content, profileFragment, "profile");
-                ft.addToBackStack(null);
-                ft.commit();
+            //TODO: 태스트해봐야.
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("friend", friend);
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ProfileFragment profileFragment = ProfileFragment.newInstance();
+            profileFragment.setArguments(bundle);
+            ft.replace(R.id.friends_tap_content, profileFragment, "profile");
+            ft.addToBackStack(null);
+            ft.commit();
             }
         });
 
