@@ -44,8 +44,6 @@ public class GuestBookAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.item_guestbook, parent, false);
         }
 
-        Log.i("진입", String.valueOf(position));
-
         ImageView img = (ImageView)convertView.findViewById(R.id.profilePicture);
         TextView name = (TextView)convertView.findViewById(R.id.name);
         TextView content = (TextView)convertView.findViewById(R.id.content);

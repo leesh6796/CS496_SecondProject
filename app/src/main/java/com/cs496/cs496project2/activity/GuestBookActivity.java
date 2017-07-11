@@ -29,7 +29,9 @@ import uk.co.senab.photoview.PhotoView;
 public class GuestBookActivity extends AppCompatActivity {
 
     private GuestBookAdapter adapter;
+    private String phoneNumber;
     private boolean myGuestBook = true;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +44,7 @@ public class GuestBookActivity extends AppCompatActivity {
 
         String name = pref.getString("name", "");
         String profileImageURL = pref.getString("profile_image_url", "");
-        final String phoneNumber = pref.getString("phone_number", "");
-
-        Log.i("name", name);
-        Log.i("URL", profileImageURL);
-        Log.i("phoneNumber", phoneNumber);
+        phoneNumber = pref.getString("phone_number", "");
 
         setTitle(name);
         Glide.with(this).load(profileImageURL).centerCrop().into((ImageView)findViewById(R.id.AppBarBackground));
@@ -55,41 +53,51 @@ public class GuestBookActivity extends AppCompatActivity {
         ListView listView = (ListView)findViewById(R.id.guestBookList);
         listView.setAdapter(adapter);
 
-        final Context context = this;
+        context = this;
+
+        update();
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, NewGuestBookActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        update();
+    }
+
+    public void update() {
+        adapter.clearItem();
 
         new AsyncTask<Void, Void, List<GuestBookItem>>() {
             @Override
             public List<GuestBookItem> doInBackground(Void... args) {
-                List<GuestBookItem> items = (new ServerRequest(context)).getGuestBook(phoneNumber, false);
+                List<GuestBookItem> items = (new ServerRequest(context)).getGuestBook(phoneNumber);
 
                 return items;
             }
 
             @Override
             public void onPostExecute(List<GuestBookItem> results) {
-                for(GuestBookItem item : results) {
+                int i;
+
+                for(i=results.size()-1; i>=0; i--) {
+                    GuestBookItem item = results.get(i);
+                    Log.i("index", String.valueOf(i));
                     if(!myGuestBook) {
                         if(item.isSecret()) continue;
                     }
+                    Log.i("item", item.getContent());
                     adapter.addItem(item);
                 }
                 adapter.notifyDataSetChanged();
             }
         }.execute();
-
-        /*Intent intent = getIntent();
-        String url = intent.getStringExtra("url");
-
-        PhotoView photoView = (PhotoView)findViewById(R.id.targetImg);
-        Glide.with(this).load(url).centerCrop().diskCacheStrategy(DiskCacheStrategy.SOURCE).into(photoView);*/
-
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
     }
 }

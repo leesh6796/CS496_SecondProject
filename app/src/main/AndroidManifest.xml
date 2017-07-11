@@ -67,6 +67,10 @@
         <activity
             android:name=".activity.GuestBookActivity"
             android:label="@string/title_activity_guest_book"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.NewGuestBookActivity"
+            android:label="@string/title_activity_new_guest_book"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

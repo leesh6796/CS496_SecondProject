@@ -182,16 +182,10 @@ public class ServerRequest {
         return null;
     }
 
-    public List<GuestBookItem> getGuestBook(String phoneNumber, boolean my) {
+    public List<GuestBookItem> getGuestBook(String phoneNumber) {
         OkHttpClient client = new OkHttpClient();
 
         String apiURL = url + "api/" + phoneNumber + "/get/guestbook";
-
-
-        if(my) {
-            apiURL += "/my";
-        }
-
         Request req = new Request.Builder().url(apiURL).build();
 
         try {
@@ -219,6 +213,34 @@ public class ServerRequest {
         }
 
         return null;
+    }
+
+    public String addGuestBook(String phoneNumber, GuestBookItem item) {
+        OkHttpClient client = new OkHttpClient();
+        String api = this.url + "api/" + phoneNumber + "/add/guestbook";
+
+        JSONObject json = new JSONObject();
+        try {
+            json.put("visitor", item.getName());
+            json.put("content", item.getContent());
+            json.put("profilePictureURL", item.getProfilePictureURL());
+            json.put("secret", item.isSecret());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        RequestBody reqBody = RequestBody.create(JSON, json.toString());
+        Request req = new Request.Builder().url(api).post(reqBody).build();
+
+        try {
+            Response res = client.newCall(req).execute();
+            String body = res.body().string();
+            return body;
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return "";
     }
 
 
