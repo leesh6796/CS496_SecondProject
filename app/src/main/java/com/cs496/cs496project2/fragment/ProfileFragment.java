@@ -114,7 +114,7 @@ public class ProfileFragment extends Fragment {
             }
         }));
 
-        adapter.notifyDataSetChanged();
+
     }
 
 }

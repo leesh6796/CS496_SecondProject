@@ -55,6 +55,9 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
     public ProfileAdapter(final Context context, final String phoneNumber) {
         this.context = context;
         this.phoneNumber = phoneNumber;
+    }
+
+    public void galleryUpdate() {
         urls.clear();
         (new AsyncTask<Void,Void,List<String>>() {
             @Override
@@ -105,6 +108,7 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
     @Override
     public void onBindItemViewHolder(RecyclerView.ViewHolder holder, int position) {
         ImageViewHolder imageViewHolder = (ImageViewHolder) holder;
+        Log.i("Position", String.valueOf(position));
 
         //TODO: image sources! -> 으악
         Glide.with(context)

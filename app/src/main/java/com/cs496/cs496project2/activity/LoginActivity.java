@@ -355,6 +355,7 @@ public class LoginActivity extends AppCompatActivity {
             edit.putString("name", name);
             try {
                 MainActivity.myProfileImageURL = new URL(uri.toString()).toString();
+                Log.e("My Profile Image Url", MainActivity.myProfileImageURL);
                 Log.e("   My Profile Image Url", MainActivity.myProfileImageURL);
                 edit.putString("profile_image_url", MainActivity.myProfileImageURL);
             } catch (MalformedURLException e) {

@@ -7,6 +7,7 @@ import android.util.SparseArray;
 import android.view.ViewGroup;
 
 import com.cs496.cs496project2.fragment.FriendsFragment;
+import com.cs496.cs496project2.fragment.GalleryFragment;
 import com.cs496.cs496project2.fragment.MatchFragment;
 import com.cs496.cs496project2.fragment.ProfileFragment;
 
@@ -23,7 +24,8 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch(position) {
             case 0: return new FriendsFragment();
-            case 1: return new ProfileFragment();
+            //case 1: return new ProfileFragment();
+            case 1: return new GalleryFragment();
             case 2: return new MatchFragment();
         }
         return null;
