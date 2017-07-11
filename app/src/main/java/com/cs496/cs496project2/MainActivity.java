@@ -96,33 +96,6 @@ public class MainActivity extends AppCompatActivity
         initViews();
 
         myPhoneNumber = getMyPhoneNumber();
-
-        //myPhoneNumber = "01082169122";
-
-        // Image list를 받아서 SharedReference에 저장
-        /*new AsyncTask<Void, Void, Void>() {
-            @Override
-            public Void doInBackground(Void... args) {
-                SharedPreferences pref = getSharedPreferences("gallery", 0);
-                ServerRequest req = new ServerRequest();
-
-                ArrayList<String> gallery = (ArrayList)req.getGallery(myPhoneNumber);
-                SharedPreferences.Editor edit = pref.edit();
-                edit.putInt("numGallery", gallery.size());
-
-                int i;
-                for(i=0; i<gallery.size(); i++) {
-                    edit.putString("gallery" + String.valueOf(i), gallery.get(i));
-                }
-
-                return null;
-            }
-
-            @Override
-            public void onPostExecute(final Void result) {
-            }
-        }.execute();*/
-
     }
 
 
@@ -132,9 +105,6 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            Intent intent = new Intent(this, GuestBookActivity.class);
-            startActivity(intent);
-
             super.onBackPressed();
         }
     }

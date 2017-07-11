@@ -40,11 +40,11 @@ public class GuestBookActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        SharedPreferences pref = getSharedPreferences("registration", 0);
-
-        String name = pref.getString("name", "");
-        String profileImageURL = pref.getString("profile_image_url", "");
-        phoneNumber = pref.getString("phone_number", "");
+        Intent intent = getIntent();
+        String name = intent.getStringExtra("name");
+        phoneNumber = intent.getStringExtra("phoneNumber");
+        String profileImageURL = intent.getStringExtra("profileImageURL");
+        myGuestBook = intent.getBooleanExtra("isMyGuestBook", false);
 
         setTitle(name);
         Glide.with(this).load(profileImageURL).centerCrop().into((ImageView)findViewById(R.id.AppBarBackground));
