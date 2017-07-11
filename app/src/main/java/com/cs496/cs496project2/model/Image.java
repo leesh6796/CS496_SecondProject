@@ -1,5 +1,7 @@
 package com.cs496.cs496project2.model;
 
+import android.content.Context;
+
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

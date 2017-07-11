@@ -52,7 +52,7 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
     }
 
 
-    public ProfileAdapter(Context context, final String phoneNumber) {
+    public ProfileAdapter(final Context context, final String phoneNumber) {
         this.context = context;
         this.phoneNumber = phoneNumber;
     }
@@ -62,7 +62,7 @@ public class ProfileAdapter extends HeaderRecyclerViewAdapter<RecyclerView.ViewH
         (new AsyncTask<Void,Void,List<String>>() {
             @Override
             protected List<String> doInBackground(Void... voids) {
-                return (new ServerRequest()).getGallery(phoneNumber);
+                return (new ServerRequest(context)).getGallery(phoneNumber);
             }
             @Override
             protected void onPostExecute(List<String> temp) {
