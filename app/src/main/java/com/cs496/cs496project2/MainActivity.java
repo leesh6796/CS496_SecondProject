@@ -28,9 +28,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.cs496.cs496project2.activity.LoginActivity;
 import com.cs496.cs496project2.adapter.MainViewPagerAdapter;
 import com.cs496.cs496project2.fragment.FriendsFragment;
@@ -184,9 +187,24 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        navigationProfileImage = (ImageView) findViewById(R.id.nav_header_image);
-        navigationName = (TextView) findViewById(R.id.nav_header_name);
-        navigationPhoneNumber = (TextView) findViewById(R.id.nav_header_phone_number);
+        View navHeader = navigationView.getHeaderView(0);
+
+        navigationProfileImage = (ImageView) navHeader.findViewById(R.id.nav_header_image);
+        navigationName = (TextView) navHeader.findViewById(R.id.nav_header_name);
+        navigationPhoneNumber = (TextView) navHeader.findViewById(R.id.nav_header_phone_number);
+
+        SharedPreferences pref = getSharedPreferences("registration", 0);
+        navigationPhoneNumber.setText(pref.getString("phone_number", ""));
+        navigationName.setText(pref.getString("name", ""));
+        myProfileImageURL = pref.getString("profile_image_url", "");
+
+        Glide.with(this)
+                .load(myProfileImageURL)
+                .placeholder(R.drawable.person)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .crossFade()
+                .into(navigationProfileImage);
+
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -216,6 +234,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
         /////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
 
