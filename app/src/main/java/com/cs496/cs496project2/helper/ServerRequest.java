@@ -203,6 +203,7 @@ public class ServerRequest {
                 GuestBookItem ele = new GuestBookItem();
 
                 ele.setName(item.getString("name"));
+                Log.i("name", item.getString("name"));
                 ele.setContent(item.getString("content"));
                 ele.setProfilePictureURL(item.getString("profilePictureURL"));
                 ele.setSecret(item.getBoolean("secret"));

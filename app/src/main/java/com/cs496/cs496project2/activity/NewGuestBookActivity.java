@@ -1,6 +1,7 @@
 package com.cs496.cs496project2.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -20,6 +22,7 @@ import com.cs496.cs496project2.helper.ServerRequest;
 public class NewGuestBookActivity extends AppCompatActivity {
 
     private Context context;
+    private String to;
     private CheckBox isSecret;
     private EditText tb_content;
 
@@ -29,6 +32,9 @@ public class NewGuestBookActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_guest_book);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Intent intent = getIntent();
+        to = intent.getStringExtra("phoneNumber");
 
         context = this;
 
@@ -48,8 +54,6 @@ public class NewGuestBookActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final SharedPreferences pref = getSharedPreferences("registration", 0);
 
-                final String phoneNumber = pref.getString("phone_number", "");
-
                 final boolean secret = isSecret.isChecked();
                 final String content = tb_content.getText().toString();
 
@@ -62,7 +66,8 @@ public class NewGuestBookActivity extends AppCompatActivity {
                         item.setSecret(secret);
                         item.setProfilePictureURL(pref.getString("profile_image_url", ""));
 
-                        (new ServerRequest(context)).addGuestBook(phoneNumber, item);
+                        Log.i("to",to);
+                        (new ServerRequest(context)).addGuestBook(to, item);
 
                         return null;
                     }

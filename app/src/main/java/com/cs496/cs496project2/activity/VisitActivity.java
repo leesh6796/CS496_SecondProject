@@ -24,6 +24,7 @@ public class VisitActivity extends AppCompatActivity {
 
     VisitActivity thisActivity = this;
     ImageView guestBookButton, galleryButton;
+    private String profileImageURL = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,20 +35,30 @@ public class VisitActivity extends AppCompatActivity {
         galleryButton = (ImageView) findViewById(R.id.btn_gallery);
 
         Intent intent = getIntent();
-        String name = intent.getStringExtra("name");
-        String phoneNumber = intent.getStringExtra("phoneNumber");
-        String profileImageURL = intent.getStringExtra("profilePictureURL");
+        final String name = intent.getStringExtra("name");
+        final String phoneNumber = intent.getStringExtra("phoneNumber");
 
-        final Friend friend = new Friend(phoneNumber, name, profileImageURL);
+        final Friend friend = new Friend(phoneNumber, name);
 
-        Log.i("profileImageURL", profileImageURL);
+        (new AsyncTask<Void,Void,String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                String url = (new ServerRequest(thisActivity)).getProfileImageUrl(friend.getPhoneNumber());
 
-        Glide.with(this)
-                .load(friend.getProfileImageUrl())
-                .placeholder(R.drawable.person)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(guestBookButton);
+                return url;
+            }
+            @Override
+            protected void onPostExecute(String url) {
+                profileImageURL = url;
+                Glide.with(thisActivity)
+                    .load(url)
+                    .placeholder(R.drawable.person)
+                    .crossFade().centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(guestBookButton);
+            }
+        }).execute();
+
 
         (new AsyncTask<Void,Void,String>() {
             @Override
@@ -62,11 +73,11 @@ public class VisitActivity extends AppCompatActivity {
                 if (!url.equals("no")) {
                     Log.i("Gallery", url);
                     Glide.with(thisActivity)
-                            .load(url)
-                            .placeholder(R.drawable.person)
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(galleryButton);
+                        .load(url)
+                        .placeholder(R.drawable.placeholder).centerCrop()
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(galleryButton);
                 }
             }
         }).execute();
@@ -78,7 +89,10 @@ public class VisitActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent guestBookIntent = new Intent(thisActivity, GuestBookActivity.class);
-                guestBookIntent.putExtra("friend", friend);
+                guestBookIntent.putExtra("name", name);
+                guestBookIntent.putExtra("profileImageURL", profileImageURL);
+                guestBookIntent.putExtra("phoneNumber", phoneNumber);
+                guestBookIntent.putExtra("isMyGuestBook", false);
                 startActivity(guestBookIntent);
             }
         });
@@ -87,7 +101,7 @@ public class VisitActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent galleryIntent = new Intent(thisActivity, GalleryActivity.class);
-                galleryIntent.putExtra("friend", friend);
+                galleryIntent.putExtra("phoneNumber", phoneNumber);
                 startActivity(galleryIntent);
             }
         });

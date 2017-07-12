@@ -47,7 +47,6 @@ public class GuestBookActivity extends AppCompatActivity {
         myGuestBook = intent.getBooleanExtra("isMyGuestBook", false);
 
         setTitle(name);
-        Glide.with(this).load(profileImageURL).centerCrop().into((ImageView)findViewById(R.id.AppBarBackground));
 
         adapter = new GuestBookAdapter();
         ListView listView = (ListView)findViewById(R.id.guestBookList);
@@ -62,7 +61,8 @@ public class GuestBookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, NewGuestBookActivity.class);
-                startActivity(intent);
+                intent.putExtra("phoneNumber", phoneNumber);
+                startActivityForResult(intent, 0);
             }
         });
     }
@@ -87,15 +87,17 @@ public class GuestBookActivity extends AppCompatActivity {
             public void onPostExecute(List<GuestBookItem> results) {
                 int i;
 
-                for(i=results.size()-1; i>=0; i--) {
-                    GuestBookItem item = results.get(i);
-                    if(!myGuestBook) {
-                        if(item.isSecret()) continue;
+                if(results != null) {
+                    for (i = results.size() - 1; i >= 0; i--) {
+                        GuestBookItem item = results.get(i);
+                        if (!myGuestBook) {
+                            if (item.isSecret()) continue;
+                        }
+                        adapter.addItem(item);
                     }
-                    adapter.addItem(item);
-                }
 
-                adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
+                }
             }
         }.execute();
     }

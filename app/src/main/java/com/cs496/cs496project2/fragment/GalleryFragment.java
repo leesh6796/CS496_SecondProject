@@ -89,13 +89,13 @@ public class GalleryFragment extends Fragment {
                 }
             }.execute();
         } else {
-            final Friend friend = (Friend) args.getSerializable("friend");
+            final String phoneNumber = args.getString("phoneNumber");
 
             new AsyncTask<Void, Void, List<String>>() {
                 @Override
                 public List<String> doInBackground(Void... args) {
                     // 다른 사람 갤러리 로드할 때
-                    return  (new ServerRequest(getActivity())).getGallery(friend.getPhoneNumber());
+                    return  (new ServerRequest(getActivity())).getGallery(phoneNumber);
                 }
                 @Override
                 public void onPostExecute(List<String> results) {

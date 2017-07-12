@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,7 +85,7 @@ public class FriendsFragment extends Fragment {
                 friends = (ArrayList<Friend>) temp;
                 adapter = new FriendAdapter(getActivity(), friends);
                 adapter.notifyDataSetChanged();
-                //listView.setAdapter(adapter);
+                listView.setAdapter(adapter);
 
             }
         }).execute();
@@ -122,7 +123,6 @@ public class FriendsFragment extends Fragment {
                         if(temp) {
                             Intent visitIntent = new Intent(getActivity(), VisitActivity.class);
                             visitIntent.putExtra("name", friend.getName());
-                            visitIntent.putExtra("profilePictureURL", friend.getProfileImageUrl());
                             visitIntent.putExtra("phoneNumber", friend.getPhoneNumber());
                             startActivity(visitIntent);
                         } else {
