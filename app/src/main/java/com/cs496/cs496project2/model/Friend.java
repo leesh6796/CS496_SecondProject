@@ -16,7 +16,6 @@ public class Friend implements Serializable {
     private String phoneNumber, name, email;
     private String profileImageUrl;
     private ArrayList<Image> images;
-    public boolean isRegistered = false;
 
     public Friend(String phoneNumber) {
         this.phoneNumber = phoneNumber;
@@ -51,20 +50,7 @@ public class Friend implements Serializable {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getProfileImageUrl() { return profileImageUrl; }
-
-    public void setProfileImageUrl(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
-        isRegistered = true;
-    }
-
-    public ArrayList<Image> getImages() {
-        return images;
-    }
 
     public ArrayList<Image> fetchImages(final Context context) {
         images = new ArrayList<Image>();
@@ -86,5 +72,7 @@ public class Friend implements Serializable {
     public void setImages(ArrayList<Image> imageIDs) {
         this.images = imageIDs;
     }
+
+
 
 }

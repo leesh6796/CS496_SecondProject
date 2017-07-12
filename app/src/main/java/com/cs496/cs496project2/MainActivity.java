@@ -176,6 +176,21 @@ public class MainActivity extends AppCompatActivity
                 .crossFade()
                 .into(navigationProfileImage);
 
+        navigationProfileImage.setOnClickListener(new ImageView.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent guestBookIntent = new Intent(thisActivity, GuestBookActivity.class);
+                SharedPreferences pref = getSharedPreferences("registration", 0);
+                guestBookIntent.putExtra("name", pref.getString("name", ""));
+                guestBookIntent.putExtra("profileImageURL", pref.getString("profile_image_url", ""));
+                guestBookIntent.putExtra("phoneNumber", pref.getString("phone_number", ""));
+                guestBookIntent.putExtra("isMyGuestBook", true);
+                startActivity(guestBookIntent);
+            }
+
+
+        });
+
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 

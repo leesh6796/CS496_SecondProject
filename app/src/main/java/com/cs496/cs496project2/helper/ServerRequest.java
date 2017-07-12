@@ -118,8 +118,6 @@ public class ServerRequest {
                 Friend item = new Friend(iter.getString("phoneNumber"));
                 item.setName(iter.getString("name"));
 
-                Log.i("name", iter.getString("name"));
-
                 friends.add(item);
             }
 
@@ -179,7 +177,7 @@ public class ServerRequest {
             return account.getString("profilePictureURL");
         } catch(JSONException e) {
             //e.printStackTrace();
-            Log.e(phoneNumber, "is not registered");
+            Log.d(phoneNumber, "is not registered");
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -205,6 +203,7 @@ public class ServerRequest {
                 GuestBookItem ele = new GuestBookItem();
 
                 ele.setName(item.getString("name"));
+                Log.i("name", item.getString("name"));
                 ele.setContent(item.getString("content"));
                 ele.setProfilePictureURL(item.getString("profilePictureURL"));
                 ele.setSecret(item.getBoolean("secret"));
@@ -257,8 +256,8 @@ public class ServerRequest {
             Response response = client.newCall(req).execute();
             String body = response.body().string();
 
-            if(body == "true") return true;
-            else if(body == "false") return false;
+            if(body.equals("true")) return true;
+            else if(body.equals("false")) return false;
         } catch(Exception e) {
             e.printStackTrace();
         }

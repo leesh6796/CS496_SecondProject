@@ -1,6 +1,7 @@
 package com.cs496.cs496project2.fragment;
 
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,14 +9,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.cs496.cs496project2.R;
+import com.cs496.cs496project2.activity.VisitActivity;
 import com.cs496.cs496project2.adapter.FriendAdapter;
 import com.cs496.cs496project2.helper.ServerRequest;
 import com.cs496.cs496project2.model.Friend;
@@ -89,17 +93,52 @@ public class FriendsFragment extends Fragment {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             public void onItemClick(AdapterView<?> adapterVIew, View view, int position, long id){
-                Friend friend = (Friend) adapter.getItem(position);
+                /*final Friend friend =                (Friend) adapter.getItem(position);
+                (new AsyncTask<Void,Void,Boolean>() {
+                        @Override
+                        protected Boolean doInBackground(Void... voids) {
+                            return (new ServerRequest(getActivity())).isRegister(friend.getPhoneNumber());
+                        }
+                    @Override
+                    protected void onPostExecute(Boolean temp) {
+                        if(temp) {
+                            Intent visitIntent = new Intent(getActivity(), VisitActivity.class);
+                            visitIntent.putExtra("friend", friend);
+                            startActivity(visitIntent);
+                        } else {
+                            Toast.makeText(getActivity(), friend.getName() + " has not registered", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }).execute();*/
+                int pos = position;
+                final Friend friend = (Friend)adapter.getItem(pos);
+                new AsyncTask<Void, Void, Boolean>() {
+                    @Override
+                    protected Boolean doInBackground(Void... args) {
+                        return (new ServerRequest(getActivity())).isRegister(friend.getPhoneNumber());
+                    }
 
-                //TODO: 태스트해봐야.
-                Bundle bundle = new Bundle();
+                    @Override
+                    protected void onPostExecute(Boolean temp) {
+                        if(temp) {
+                            Intent visitIntent = new Intent(getActivity(), VisitActivity.class);
+                            visitIntent.putExtra("name", friend.getName());
+                            visitIntent.putExtra("phoneNumber", friend.getPhoneNumber());
+                            startActivity(visitIntent);
+                        } else {
+                            Toast.makeText(getActivity(), friend.getName() + " has not registered", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }.execute();
+
+                /*Bundle bundle = new Bundle();
                 bundle.putSerializable("friend", friend);
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 GalleryFragment galleryFragment = new GalleryFragment();
                 galleryFragment.setArguments(bundle);
                 ft.replace(R.id.friends_tap_content, galleryFragment, "gallery");
                 ft.addToBackStack(null);
-                ft.commit();
+                ft.commit();*/
             }
         });
 

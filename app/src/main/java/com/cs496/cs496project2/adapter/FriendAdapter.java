@@ -34,6 +34,10 @@ public class FriendAdapter extends BaseAdapter implements Filterable {
         filterList = items;
     }
 
+    public FriendAdapter(Context context) {
+        this.context = context;
+    }
+
 
     @Override
     public int getCount() {
